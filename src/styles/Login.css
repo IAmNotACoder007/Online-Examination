@@ -1,0 +1,98 @@
+.login-container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-container button {
+    margin-top: 15px;
+}
+
+.login-container .paper-sheet > div {
+    height: 390px;
+    width: 365px;
+}
+
+.login-page-paper-content {
+    display: flex;
+    flex-direction: column;
+    padding: 35px;
+    padding-top: 0;
+    padding-bottom: 0;
+    flex: 1;
+}
+
+.login-header {
+    height: 85px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 35px;
+    padding-bottom: 0;
+    padding-top: 0;
+}
+
+.login-header button {
+    font-weight: normal;
+    text-transform: capitalize;
+    font-size: 12px;
+}
+
+.sign-in {
+    font-weight: 500;
+}
+
+.forgot-password {
+    font-size: 12px;
+    align-self: flex-end;
+    height: 30px;
+    display: flex;
+    align-items: flex-end;
+}
+
+.forgot-password:hover {
+    background: #64B5F6
+}
+
+a.forgot-password-link {
+    color: #26A69A;
+    padding-top: 25px;
+    font-size: 14px;
+    font-family: verdana;
+    cursor: pointer;
+}
+
+.login-page-footer-container {
+    font-size: 13px;
+    font-family: verdana;
+    height: 49px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid #dee4e7;
+}
+
+.create-account-link {
+    color: #26A69A;
+    padding-left: 3px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.create-account-link:hover, .forgot-password-link:hover {
+    text-decoration: underline;
+}
+
+.footer-text {
+    color: #999;
+}
+
+.login-page-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}

@@ -1,0 +1,59 @@
+.register-container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.register-page-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.register-page-paper-content {
+    display: flex;
+    flex-direction: column;
+    padding: 35px;
+    padding-top: 0;
+    padding-bottom: 0;
+    flex: 1;
+}
+
+.register-page-footer-container {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid #dee4e7;
+    font-size: 13px;
+    font-family: verdana;
+}
+
+.register-container button {
+    margin: 35px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.main-content {
+    overflow: hidden;
+    max-height: 336px;
+    margin-right: 3px;
+}
+
+.main-content:hover {
+    overflow: auto;
+}
+
+.register-header {
+    height: 85px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.register-container .paper-sheet>div {
+    height: 550px;
+    width: 365px;
+}
