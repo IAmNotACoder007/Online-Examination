@@ -6,6 +6,7 @@ import ActionButton from './material_components/ActionButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import PasswordIcon from '@material-ui/icons/Https';
 import { Link } from 'react-router-dom';
+import { subscribeToEvent, emitEvent } from './Api.js';
 
 
 class Login extends Component {
@@ -21,7 +22,9 @@ class Login extends Component {
         this.passwordErrorMessage = "Password must be specified";
         this.doLogin = () => {
             this.validateFields();
+            emitEvent("doLogin", { userId: this.state.userName, password: this.state.password });
         }
+        
         this.getLoginPaperContent = () => {
             const primaryTheme = {
                 light: '#80CBC4',
