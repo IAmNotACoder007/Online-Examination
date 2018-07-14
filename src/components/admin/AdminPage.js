@@ -6,6 +6,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import AddQuestions from './AddQuestionsPage';
 import Departments from './DepartmentPage';
+import '../../styles/admin/AdminPage.css'
 
 
 class AdminPage extends Component {
@@ -42,26 +43,27 @@ class AdminPage extends Component {
             }
         });
         return (
-            <div style={{ height: "100%"}}>
-                <MuiThemeProvider theme={theme}>
-                    <Paper>
-                        <Tabs
-                            value={this.state.value}
-                            onChange={this.handleChange}
-                            indicatorColor="primary"
-                            textColor="primary"
-                            centered
-                        >
-                            <Tab label="Manage Departments" />
-                            <Tab label="Add Question/Answers" />
-                            <Tab label="Edit/Delete Question/Answers" />
-                            <Tab label="Setting" />
-                        </Tabs>
-                    </Paper>
-                    {this.renderTabContent()}
-                </MuiThemeProvider>
-
-            </div>
+            <content className="admin-page-main-container">
+                <div style={{padding:"25px" }}>
+                    <MuiThemeProvider theme={theme}>
+                        <Paper>
+                            <Tabs
+                                value={this.state.value}
+                                onChange={this.handleChange}
+                                indicatorColor="primary"
+                                textColor="primary"
+                                centered
+                            >
+                                <Tab label="Manage Departments" />
+                                <Tab label="Add Question/Answers" />
+                                <Tab label="Edit/Delete Question/Answers" />
+                                <Tab label="Setting" />
+                            </Tabs>
+                        </Paper>
+                        {this.renderTabContent()}
+                    </MuiThemeProvider>
+                </div>
+            </content>
 
         )
     }

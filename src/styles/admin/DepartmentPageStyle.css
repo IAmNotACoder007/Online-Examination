@@ -2,18 +2,18 @@
     width: 100%;
     height: calc(100% - 50px);
     display: flex;
-    align-items: center;
+    padding-top: 25px;
     justify-content: center;
 }
 
-.department-container main{    
+.department-container main {
     overflow: auto;
-    margin: 5px;   
+    margin: 5px;
 }
 
 .department-container .paper-sheet {
-    height: 70%;
-    width: 30%;
+    height: 85%;
+    width: 50%;
 }
 
 .department-container .paper-sheet>div {
@@ -43,9 +43,13 @@
     height: 50px;
 }
 
-.department text{
+.department text {
     flex: 1;
-    display: flex;
+    max-width: calc(100% - 96px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;   
+    text-align: initial;
 }
 
 .department-content {
@@ -61,14 +65,16 @@
     justify-content: flex-end;
     padding: 5px;
 }
-main{
-    flex:1;
+
+main {
+    flex: 1;
 }
-.department-dialog{
+
+.department-dialog {
     height: 250px;
     width: 400px;
 }
 
-.delete-dialog.department-dialog{
+.delete-dialog.department-dialog {
     height: 175px;
 }
