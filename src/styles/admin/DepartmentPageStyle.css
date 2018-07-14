@@ -1,0 +1,74 @@
+.department-container {
+    width: 100%;
+    height: calc(100% - 50px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.department-container main{    
+    overflow: auto;
+    margin: 5px;   
+}
+
+.department-container .paper-sheet {
+    height: 70%;
+    width: 30%;
+}
+
+.department-container .paper-sheet>div {
+    height: 100%;
+    width: 100%;
+}
+
+.no-data-found {
+    font-size: 20px;
+    font-family: Roboto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.department {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    font-family: roboto;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.54);
+    border-bottom: 1px solid rgba(224, 224, 224, 1);
+    height: 50px;
+}
+
+.department text{
+    flex: 1;
+    display: flex;
+}
+
+.department-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.add-button {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 5px;
+}
+main{
+    flex:1;
+}
+.department-dialog{
+    height: 250px;
+    width: 400px;
+}
+
+.delete-dialog.department-dialog{
+    height: 175px;
+}

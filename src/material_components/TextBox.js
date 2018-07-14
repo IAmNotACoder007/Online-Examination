@@ -8,9 +8,10 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 
 
 class TextBox extends Component {
-    handleChange = fieldName => event => {       
+    handleChange = fieldName => event => {
         const val = event.target.value;
-        this.props.onChange(fieldName,val)
+        if (this.props.onChange)
+            this.props.onChange(fieldName, val)
     };
 
     getErrorJsx = () => {
@@ -25,12 +26,13 @@ class TextBox extends Component {
                 primary: primaryTheme,
                 secondary: secondaryTheme,
             }
-        });
+        });       
 
         return (
             <MuiThemeProvider theme={theme}>
                 <TextField required={this.props.required}
                     error={this.props.error}
+                    multiline={this.props.multiline}
                     id={this.props.id}
                     label={this.props.label}
                     placeholder={this.props.placeholder}
@@ -62,15 +64,16 @@ TextBox.propTypes = {
     className: PropTypes.string,
     defaultValue: PropTypes.string,
     type: PropTypes.string,
-    onChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func,
     fullWidth: PropTypes.bool,
     required: PropTypes.bool,
     error: PropTypes.bool,
     errorMessage: PropTypes.string,
     primaryTheme: PropTypes.object,
     secondaryTheme: PropTypes.object,
-    inputAdornment:PropTypes.object,
-    fieldName:PropTypes.string.required
+    inputAdornment: PropTypes.object,
+    fieldName: PropTypes.string.required,
+    multiline:PropTypes.bool,
 }
 
 TextBox.defaultProps = {
@@ -95,7 +98,9 @@ TextBox.defaultProps = {
         dark: '#AD1457',
         contrastText: '#fff',
     },
-    inputAdornment:''
+    inputAdornment: '',
+    onChange: undefined,
+    multiline:false
 }
 
 export default TextBox;

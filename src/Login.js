@@ -7,6 +7,8 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import PasswordIcon from '@material-ui/icons/Https';
 import { Link } from 'react-router-dom';
 import { subscribeToEvent, emitEvent } from './Api.js';
+import {Redirect } from 'react-router-dom';
+
 
 
 class Login extends Component {
@@ -23,6 +25,7 @@ class Login extends Component {
         this.doLogin = () => {
             this.validateFields();
             emitEvent("doLogin", { userId: this.state.userName, password: this.state.password });
+            <Redirect to="/admin"/>
         }
         
         this.getLoginPaperContent = () => {

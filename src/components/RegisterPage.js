@@ -3,7 +3,11 @@ import TextBox from '../material_components/TextBox';
 import ActionButton from '../material_components/ActionButton';
 import PaperSheet from '../material_components/PaperSheet';
 import { Link } from 'react-router-dom';
-import '../styles/RegisterPage.css'
+import '../styles/RegisterPage.css';
+import { subscribeToEvent, emitEvent } from '../Api.js';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
+import '../../node_modules/react-notifications/dist/react-notifications.css';
+
 
 
 class Register extends Component {
@@ -23,6 +27,23 @@ class Register extends Component {
         this.emailErrorMessage = "Email address must be specified";
         this.mobileErrorMessage = "Mobile number must be specified";
         this.dobErrorMessage = "Date of birth must be specified";
+        this.isValidForm = true;
+
+        subscribeToEvent("userAddedSuccessfully",()=>{
+            NotificationManager.success('Sign Up successfully');
+            this.setState({
+                fullName: '',
+                userName: '',
+                password: '',
+                emailAddress: '',
+                mobileNumber: '',
+                dob: ''
+            })
+        });
+
+        subscribeToEvent("userAdditionFailed",()=>{
+            NotificationManager.error('Something went wrong');
+        });
 
         this.state = {
             userNameError: false,
@@ -41,39 +62,51 @@ class Register extends Component {
 
         this.doSignUp = () => {
             this.validateSignUpForm();
+            if (this.isValidForm) {
+                emitEvent("addNewUser", {
+                    fullName: this.state.fullName, userName: this.state.userName, password: this.state.password,
+                    emailAddress: this.state.emailAddress, mobileNumber: this.state.mobileNumber, dateOfBirth: new Date(this.state.dob).toISOString()
+                });
+            }
         }
 
         this.validateSignUpForm = () => {
+            this.isValidForm = true;
             if (!this.state.fullName) {
-                this.setState({ fullNameError: true });
+                this.markAsInvalidField('fullNameError')
             } else {
                 this.setState({ fullNameError: false });
             }
             if (!this.state.userName) {
-                this.setState({ userNameError: true });
+                this.markAsInvalidField('userNameError')
             } else {
                 this.setState({ userNameError: false });
             }
             if (!this.state.password) {
-                this.setState({ passwordError: true });
+                this.markAsInvalidField("passwordError")
             } else {
                 this.setState({ passwordError: false });
             }
             if (!this.state.emailAddress) {
-                this.setState({ emailError: true });
+                this.markAsInvalidField("emailError");
             } else {
                 this.setState({ emailError: false });
             }
             if (!this.state.mobileNumber) {
-                this.setState({ mobileError: true });
+                this.markAsInvalidField("mobileError");
             } else {
                 this.setState({ mobileError: false });
             }
             if (!this.state.dob) {
-                this.setState({ dobError: true });
+                this.markAsInvalidField("dobError")
             } else {
                 this.setState({ dobError: false });
             }
+        }
+
+        this.markAsInvalidField = (fieldName) => {
+            this.isValidForm = false;
+            this.setState({ [fieldName]: true });
         }
 
         this.handleChange = (fieldName, val) => {
@@ -110,6 +143,7 @@ class Register extends Component {
                             <span className="footer-text">Have an account?</span><Link to="/login" className="create-account-link">Login</Link>
                         </div>
                     </footer>
+                    <NotificationContainer/>
                 </div>
             )
         }
