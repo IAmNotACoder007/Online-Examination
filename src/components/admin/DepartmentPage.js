@@ -153,7 +153,7 @@ class Department extends Component {
         }
 
         this.handleChange = (fieldName, val) => {
-            if (val) {
+            if (val && val.trim()) {
                 this.setState({ hasValidation: false });
             }
         }

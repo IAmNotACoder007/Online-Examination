@@ -77,12 +77,35 @@ io.on('connection', socket => {
                 } else {
                     const selectQuery = "select* from departments";
                     executeQuery(selectQuery).then((record) => {
-                        notifyClient("newDepartmentsAdded",record)
+                        notifyClient("newDepartmentsAdded", record)
                     }).catch((err) => {
                         notifyClient("operationFailed");
                         console.log(err)
                     });
-                   
+
+                }
+            });
+        });
+    });
+
+    socket.on("addQuestionAndAnswers", (data) => {
+        const table = new sql.Table("questions_answers");
+        table.create = true;
+        table.columns.add('id', sql.NVarChar(50), { nullable: false });
+        table.columns.add('questions', sql.NVarChar(255), { nullable: false });
+        table.columns.add('answers', sql.NVarChar(255), { nullable: false });
+        table.columns.add('department', sql.NVarChar(255), { nullable: false });
+        for (let i = 0; i < data.questions; i++) {
+            table.rows.add(`${uniqueId()}`, data.questions[i], data.answers[i], data.department);
+        }
+        connectSql().then((request) => {
+            request.bulk(table, (err, result) => {
+                sql.close();
+                if (err) {
+                    console.log(err)
+                    socket.emit("operationFailed");
+                } else {
+                    notifyClient("questionsAddedSuccessfully");
                 }
             });
         });
