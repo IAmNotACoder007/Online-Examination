@@ -47,7 +47,7 @@ class Department extends Component {
                     )
                 case "Add":
                     return (
-                        <TextBox onChange={this.handleChange} multiline={true} fullWidth={true} errorMessage={this.errorMessage} error={this.state.hasValidation} required={true} id="departmentName" fieldName="departmentName" placeholder="Put One Department Name Per Line" label="Department Name" />
+                        <TextBox onChange={this.handleChange} rows="5" multiline={true} fullWidth={true} errorMessage={this.errorMessage} error={this.state.hasValidation} required={true} id="departmentName" fieldName="departmentName" placeholder="Put One Department Name Per Line" label="Department Name" />
                     )
                 case "Delete":
                     return (

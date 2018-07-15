@@ -26,7 +26,7 @@ class TextBox extends Component {
                 primary: primaryTheme,
                 secondary: secondaryTheme,
             }
-        });       
+        });
 
         return (
             <MuiThemeProvider theme={theme}>
@@ -42,6 +42,7 @@ class TextBox extends Component {
                     onChange={this.handleChange(this.props.fieldName)}
                     fullWidth={this.props.fullWidth}
                     type={this.props.type}
+                    rows={this.props.rows}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -73,7 +74,8 @@ TextBox.propTypes = {
     secondaryTheme: PropTypes.object,
     inputAdornment: PropTypes.object,
     fieldName: PropTypes.string.required,
-    multiline:PropTypes.bool,
+    multiline: PropTypes.bool,
+    rows: PropTypes.string
 }
 
 TextBox.defaultProps = {
@@ -100,7 +102,8 @@ TextBox.defaultProps = {
     },
     inputAdornment: '',
     onChange: undefined,
-    multiline:false
+    multiline: false,
+    rows: "5"
 }
 
 export default TextBox;

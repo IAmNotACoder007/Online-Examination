@@ -8,11 +8,11 @@ class PaperSheet extends Component {
         this.props = props;
     }
     render() {
-        const { classes } = this.props.classes;       
+        const { classes } = this.props.classes;
         return (
             <div className="paper-sheet">
                 <Paper className={classes} elevation={this.props.elevation}>
-                    {this.props.content}    
+                    {this.props.content}
                 </Paper>
             </div>
         );
@@ -21,13 +21,13 @@ class PaperSheet extends Component {
 
 PaperSheet.defaultProps = {
     classes: '',
-    elevation:2
+    elevation: 2
 }
 
 PaperSheet.propTypes = {
     classes: PropTypes.string,
     content: PropTypes.object.isRequired,
-    elevation:PropTypes.number
+    elevation: PropTypes.number
 };
 
 export default PaperSheet;

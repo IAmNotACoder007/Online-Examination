@@ -43,7 +43,7 @@ ActionButton.propTypes = {
 }
 
 ActionButton.defaultProps = {
-    color: '',
+    color: 'primary',
     class: '',
     size: "medium",
     id: '',

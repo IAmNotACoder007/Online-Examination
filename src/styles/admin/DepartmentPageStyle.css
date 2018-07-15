@@ -62,7 +62,7 @@
     height: 60px;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     padding: 5px;
 }
 
@@ -77,4 +77,8 @@ main {
 
 .delete-dialog.department-dialog {
     height: 175px;
+}
+
+.add-dialog.department-dialog{
+    height: 300px;
 }
