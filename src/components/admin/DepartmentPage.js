@@ -53,6 +53,11 @@ class Department extends Component {
                     return (
                         "Are you sure you want to delete this department?"
                     )
+
+                default:
+                    return (
+                        <div>Content not found</div>
+                    )
             }
 
         }
@@ -125,11 +130,11 @@ class Department extends Component {
             }
             var memberArr = members;
             if (!Array.isArray(memberArr)) {
-                memberArr = new Array();
+                memberArr = [];
                 memberArr.push(members);
             }
             const hasDuplicateMembers = memberArr.some((member, i) => {
-                return memberArr.indexOf(member) != i
+                return memberArr.indexOf(member) !== i
             });
 
             if (hasDuplicateMembers) {

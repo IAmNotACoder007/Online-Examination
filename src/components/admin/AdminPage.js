@@ -27,6 +27,10 @@ class AdminPage extends Component {
                 return <TabContainer>Item three</TabContainer>
             case 3:
                 return <TabContainer>Item four</TabContainer>
+            default:
+                return (
+                    <div>Sorry, page not found</div>
+                )
         }
 
     }
@@ -44,7 +48,7 @@ class AdminPage extends Component {
         });
         return (
             <content className="admin-page-main-container">
-                <div style={{padding:"25px" }}>
+                <div style={{ padding: "25px" }}>
                     <MuiThemeProvider theme={theme}>
                         <Paper>
                             <Tabs

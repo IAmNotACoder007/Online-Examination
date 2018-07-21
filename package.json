@@ -15,7 +15,8 @@
     "react-scripts": "1.1.4",
     "socket.io": "^2.1.1",
     "socket.io-client": "^2.1.1",
-    "uuid": "^3.2.1"
+    "uuid": "^3.2.1",
+    "xlsx": "^0.13.2"
   },
   "scripts": {
     "start": "react-scripts start",

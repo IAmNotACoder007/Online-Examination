@@ -6,7 +6,6 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import PropTypes from 'prop-types';
 import Slide from '@material-ui/core/Slide';
-import transitions from '../../node_modules/@material-ui/core/styles/transitions';
 
 function Transition(props) {
     return <Slide direction="up" {...props} />;
