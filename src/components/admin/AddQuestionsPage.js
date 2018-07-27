@@ -9,7 +9,7 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import Button from '@material-ui/core/Button';
 import XLSX from 'xlsx';
 import MaterialDialog from '../../material_components/Dialog'
-import WarningIcon from '@material-ui/icons/Warning';
+import ErrorIcon from '@material-ui/icons/Error';
 import ClearIcon from '@material-ui/icons/Clear';
 
 class AddQuestions extends Component {
@@ -45,13 +45,20 @@ class AddQuestions extends Component {
 
         this.saveQuestions = () => {
             if (!this.state.uploadFile) {
+
                 let questions = document.getElementById('exam-questions').value.trim();
                 questions = questions ? questions.split(/\n/) : undefined;
                 let answers = document.getElementById('exam-options').value.trim();
                 answers = answers ? answers.split(/\n/) : undefined;
                 if (this.hasValidMembers(questions, answers)) { }
+
             } else {
-                this.setState({ showPreview: true });
+                const fileName = document.getElementById("html-upload").value;
+                if (fileName && this.isExcelFile(fileName)) {
+                    this.setState({ showPreview: true });
+                } else {
+                    this.setState({ showWarning: true });
+                }
             }
         }
 
@@ -103,8 +110,8 @@ class AddQuestions extends Component {
                         binary += String.fromCharCode(bytes[i]);
                     }
                     // call 'xlsx' to read the file
-                    var oFile = XLSX.read(binary, { type: 'binary', cellDates: true, cellStyles: true });
-                    this.fillQuestionsOptions(oFile.Strings);
+                    var workbook = XLSX.read(binary, { type: 'binary', cellDates: true, cellStyles: true });
+                    this.fillQuestionsOptions(workbook);
                 };
                 fileReader.readAsArrayBuffer(file);
             } else {
@@ -112,17 +119,29 @@ class AddQuestions extends Component {
             }
         }
 
-        this.fillQuestionsOptions = (quesOpt) => {
+        this.fillQuestionsOptions = (workbook) => {
             this.questions = [];
-            this.answers = [];
-            if (quesOpt && quesOpt.length) {
-                for (let i = 0; i < quesOpt.length; i++) {
-                    if (i === 0 || i % 2 === 0)
-                        this.questions.push(quesOpt[i].t);
-                    else
-                        this.options.push(quesOpt[i].t)
-                }
-            }
+            this.options = [];
+            const jsonData = this.to_json(workbook)
+            Object.keys(jsonData).forEach((key) => {
+                var columns = jsonData[key];
+                columns.forEach((column) => {
+                    this.questions.push(column.Questions || column.questions);
+                    this.options.push(column.Options || column.options);
+                });
+            });
+
+
+        }
+
+        this.to_json = (workbook) => {
+            if (workbook.SSF) XLSX.SSF.load_table(workbook.SSF);
+            let result = {};
+            workbook.SheetNames.forEach(function (sheetName) {
+                let roa = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                if (roa.length > 0) result[sheetName] = roa;
+            });
+            return result;
         }
 
         this.isExcelFile = (filename) => {
@@ -135,7 +154,7 @@ class AddQuestions extends Component {
             if (this.state.showWarning) {
                 return (
                     <div className="warning-message">
-                        <WarningIcon style={{ height: "60px", width: '60px' }} color="error" />
+                        <ErrorIcon style={{ height: "60px", width: '60px' }} color="error" />
                         Please upload an Excel file
                 </div>
                 )
@@ -230,7 +249,7 @@ class AddQuestions extends Component {
                 <main>
                     <PaperSheet content={this.getPaperContent()} />
                 </main>
-                <MaterialDialog isOpen={this.state.showWarning || this.state.showPreview} dialogTitle={this.state.showWarning ? "Warning" : "Preview"} dialogContent={this.getDialogContent()} dialogButtons={this.getDialogButtons()} />
+                <MaterialDialog isOpen={this.state.showWarning || this.state.showPreview} dialogTitle={this.state.showWarning ? "Error" : "Preview"} dialogContent={this.getDialogContent()} dialogButtons={this.getDialogButtons()} />
 
             </div>
         )
