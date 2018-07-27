@@ -9,7 +9,7 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import Button from '@material-ui/core/Button';
 import XLSX from 'xlsx';
 import MaterialDialog from '../../material_components/Dialog'
-import ErrorIcon from '@material-ui/icons/Error';
+import ErrorIcon from '@material-ui/icons/ErrorOutline';
 import ClearIcon from '@material-ui/icons/Clear';
 
 class AddQuestions extends Component {
