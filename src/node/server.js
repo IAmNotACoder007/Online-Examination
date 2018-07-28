@@ -88,22 +88,22 @@ io.on('connection', socket => {
         });
     });
 
-    socket.on("addQuestionAndAnswers", (data) => {
-        const table = new sql.Table("questions_answers");
+    socket.on("addQuestionAndOptions", (data) => {
+        const table = new sql.Table("questions_options");
         table.create = true;
         table.columns.add('id', sql.NVarChar(50), { nullable: false });
         table.columns.add('questions', sql.NVarChar(255), { nullable: false });
-        table.columns.add('answers', sql.NVarChar(255), { nullable: false });
+        table.columns.add('options', sql.NVarChar(255), { nullable: false });
         table.columns.add('department', sql.NVarChar(255), { nullable: false });
-        for (let i = 0; i < data.questions; i++) {
-            table.rows.add(`${uniqueId()}`, data.questions[i], data.answers[i], data.department);
+        for (let i = 0; i < data.questions.length; i++) {
+            table.rows.add(`${uniqueId()}`, data.questions[i], data.options[i], data.department);
         }
         connectSql().then((request) => {
             request.bulk(table, (err, result) => {
                 sql.close();
                 if (err) {
                     console.log(err)
-                    socket.emit("operationFailed");
+                    notifyClient("operationFailed");
                 } else {
                     notifyClient("questionsAddedSuccessfully");
                 }

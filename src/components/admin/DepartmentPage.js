@@ -10,8 +10,9 @@ import MaterialDialog from '../../material_components/Dialog';
 import TextBox from '../../material_components/TextBox';
 import ActionButton from '../../material_components/ActionButton';
 import { subscribeToEvent, emitEvent } from '../../Api';
-import { NotificationContainer, NotificationManager } from 'react-notifications';
+import { NotificationManager } from 'react-notifications';
 import '../../../node_modules/react-notifications/dist/react-notifications.css';
+import Tooltip from '@material-ui/core/Tooltip';
 
 class Department extends Component {
     state = {
@@ -192,9 +193,11 @@ class Department extends Component {
                     </main>
                     <footer>
                         <div className="add-button">
-                            <Button onClick={this.addDepartment} variant="fab" color="primary" aria-label="add">
-                                <AddIcon />
-                            </Button>
+                            <Tooltip title="Add New Departments">
+                                <Button onClick={this.addDepartment} variant="fab" color="primary" aria-label="add">
+                                    <AddIcon />
+                                </Button>
+                            </Tooltip>
                         </div>
                     </footer>
                 </div>
@@ -215,7 +218,7 @@ class Department extends Component {
             <div className="department-container" >
                 <PaperSheet classes="department-page-paper" content={this.getDepartmentPaperContent()} />
                 <MaterialDialog isAlertDialog={this.isAlertDialog} dialogTitle={this.dialogTitle} styleClass={this.dialogStyleClass} dialogContent={this.getDialogContent()} dialogButtons={this.dialogButtons} isOpen={this.state.isDialogOpen} />
-                <NotificationContainer />
+
             </div>
         )
     }

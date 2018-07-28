@@ -11,6 +11,9 @@ import XLSX from 'xlsx';
 import MaterialDialog from '../../material_components/Dialog'
 import ErrorIcon from '@material-ui/icons/ErrorOutline';
 import ClearIcon from '@material-ui/icons/Clear';
+import WarningIcon from '@material-ui/icons/Warning';
+import { subscribeToEvent, emitEvent } from '../../Api';
+import { NotificationManager } from 'react-notifications';
 
 class AddQuestions extends Component {
     constructor(props) {
@@ -20,6 +23,7 @@ class AddQuestions extends Component {
         this.answersErrorMessage = undefined;
         this.questions = [];
         this.options = [];
+        this.disableContinueButton = false;
 
 
         this.state = {
@@ -33,7 +37,7 @@ class AddQuestions extends Component {
         }
 
         this.onComboValueChange = (val) => {
-            this.selectedDepartment = val;
+            this.selectedDepartment = this.state.departments[val-1];
         }
 
         this.handleChange = (fieldName, val) => {
@@ -43,14 +47,17 @@ class AddQuestions extends Component {
             }
         }
 
-        this.saveQuestions = () => {
+        this.showPreview = () => {
             if (!this.state.uploadFile) {
-
                 let questions = document.getElementById('exam-questions').value.trim();
                 questions = questions ? questions.split(/\n/) : undefined;
                 let answers = document.getElementById('exam-options').value.trim();
                 answers = answers ? answers.split(/\n/) : undefined;
-                if (this.hasValidMembers(questions, answers)) { }
+                if (this.hasValidMembers(questions, answers)) {
+                    this.questions = questions;
+                    this.options = answers;
+                    this.setState({ showPreview: true });
+                }
 
             } else {
                 const fileName = document.getElementById("html-upload").value;
@@ -126,8 +133,12 @@ class AddQuestions extends Component {
             Object.keys(jsonData).forEach((key) => {
                 var columns = jsonData[key];
                 columns.forEach((column) => {
-                    this.questions.push(column.Questions || column.questions);
-                    this.options.push(column.Options || column.options);
+                    const question = column.Questions || column.questions;
+                    const option = column.Options || column.options;
+                    if (question)
+                        this.questions.push(question);
+                    if (option)
+                        this.options.push(option);
                 });
             });
 
@@ -161,14 +172,7 @@ class AddQuestions extends Component {
             } else if (this.state.showPreview) {
                 return (
                     <div className="preview-container">
-                        {this.questions.map((ques, index) => {
-                            return (
-                                <div style={{ paddingBottom: '12px' }}>
-                                    <div className="question"><b>Question:</b><text style={{ paddingLeft: "5px" }}> {ques}</text></div>
-                                    <div className="options"><b>Options:</b> {this.getOptionsPreviewJsx(this.options[index])}</div>
-                                </div>
-                            )
-                        })}
+                        {this.getPreviewJsx()}
                     </div>
                 )
             }
@@ -177,7 +181,7 @@ class AddQuestions extends Component {
         this.getOptionsPreviewJsx = (options) => {
             if (!options) return;
             return (
-                <div style={{ paddingLeft: "10px" }}>
+                <div style={{ paddingLeft: "14px" }}>
                     {options.split(',').map((option) => {
                         return (
                             <div>{option}</div>
@@ -185,6 +189,24 @@ class AddQuestions extends Component {
                     })}
                 </div>
             )
+        }
+
+        this.getPreviewJsx = () => {
+            if (this.questions && this.questions.length) {
+                return (this.questions.map((ques, index) => {
+                    return (
+                        <div style={{ paddingBottom: '12px' }}>
+                            <div className="question"><b>Question:</b><text style={{ paddingLeft: "5px" }}> {ques}</text></div>
+                            <div className="options"><b>Options:</b> {this.getOptionsPreviewJsx(this.options[index])}</div>
+                        </div>
+                    )
+                }))
+            } else {
+                this.disableContinueButton = true;
+                return (<div className="preview-error-msg">
+                    <WarningIcon style={{ height: "60px", width: '60px' }} color="error" />
+                    No Data Found</div>)
+            }
         }
 
         this.getDialogButtons = () => {
@@ -195,11 +217,25 @@ class AddQuestions extends Component {
             } else if (this.state.showPreview) {
                 return (
                     <div>
-                        <ActionButton flatButton={true} text="Continue" onClick={() => { this.setState({ showPreview: false }) }} />
-                        <ActionButton flatButton={true} text="Cancel" onClick={() => { this.setState({ showPreview: false }) }} />
+                        <ActionButton disabled={this.disableContinueButton} flatButton={true} text="Continue" onClick={this.updateQuestionOptions} />
+                        <ActionButton flatButton={true} text="Cancel" onClick={() => { this.disableContinueButton = false; this.setState({ showPreview: false }) }} />
                     </div>
                 )
             }
+        }
+
+        this.updateQuestionOptions = () => {
+            const data = { questions: this.questions, options: this.options, department: (this.selectedDepartment||this.state.departments[0]) }
+            emitEvent("addQuestionAndOptions", data);
+            subscribeToEvent("questionsAddedSuccessfully",()=>{
+                NotificationManager.success('Questions Saved.', 'Success');
+                this.setState({ showPreview: false });
+            })
+
+            subscribeToEvent("operationFailed",()=>{
+                NotificationManager.error('Something wend wrong.', 'Error');
+                this.setState({ showPreview: false });
+            })
         }
 
         this.resetFile = () => {
@@ -233,7 +269,7 @@ class AddQuestions extends Component {
                         </section>
                     </content>
                     <footer className="exam-add-question-footer">
-                        <ActionButton size="large" text="Save" onClick={this.saveQuestions} />
+                        <ActionButton size="large" text="Save" onClick={this.showPreview} />
                     </footer>
                 </div>
             )
@@ -249,7 +285,7 @@ class AddQuestions extends Component {
                 <main>
                     <PaperSheet content={this.getPaperContent()} />
                 </main>
-                <MaterialDialog isOpen={this.state.showWarning || this.state.showPreview} dialogTitle={this.state.showWarning ? "Error" : "Preview"} dialogContent={this.getDialogContent()} dialogButtons={this.getDialogButtons()} />
+                <MaterialDialog styleClass="preview-error-dialog" isOpen={this.state.showWarning || this.state.showPreview} dialogTitle={this.state.showWarning ? "Error" : "Preview"} dialogContent={this.getDialogContent()} dialogButtons={this.getDialogButtons()} />
 
             </div>
         )

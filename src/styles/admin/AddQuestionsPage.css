@@ -100,3 +100,11 @@
 .options{    
     padding-top: 2px;
 }
+
+.preview-error-msg {
+    font-size: 15px;
+    font-family: roboto;
+    display: flex;
+    align-items: center;    
+    width: 250px;
+}
