@@ -1,0 +1,39 @@
+.question-options-row {
+    display: flex;
+    padding: 5px;
+}
+
+.option {
+    display: flex;
+    max-width: 50%;
+    min-width: 50%;
+    font-size: 15px;
+    font-family: roboto;
+}
+
+.option text {
+    max-width: 25%;
+    min-width: 25%;
+}
+
+.option text, .question text {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.question {
+    flex: 1;
+    max-width: 40%;
+    min-width: 40%;
+}
+
+.update-questions-options-container{
+    max-width: 870px;
+}
+
+header.update-questions-header {
+    display: flex;
+    align-items: center;
+    height: 50px;
+}

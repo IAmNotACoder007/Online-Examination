@@ -48,3 +48,10 @@ background-color: #BDBDBD;
 outline: 1px solid slategrey;
 border-radius: 5px;
 }
+
+.exam-combo-box .combo-box {
+  font-size: 15px;
+  color: rgba(0, 0, 0, 0.54);
+  font-weight: 500;
+  text-transform: capitalize;
+}

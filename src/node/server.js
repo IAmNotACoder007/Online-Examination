@@ -29,7 +29,14 @@ app.get('/getDepartments', (req, res) => {
         res.send(JSON.stringify(record));
     });
 });
-
+app.get('/getQuestionsOptionsForDepartments', (req, res) => {
+    const departmentName=req.query.departmentName;
+    if(!departmentName)  res.send(null);
+    const query = `select* from questions_options where department='${departmentName}'`;
+    executeQuery(query).then((record) => {
+        res.send(JSON.stringify(record));
+    });
+});
 // This is what the socket.io syntax is like, we will work this later
 io.on('connection', socket => {
     console.log('User connected');

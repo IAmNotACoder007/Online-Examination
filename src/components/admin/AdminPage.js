@@ -7,6 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import AddQuestions from './AddQuestionsPage';
 import Departments from './DepartmentPage';
 import '../../styles/admin/AdminPage.css'
+import UpdateQuestionOptions from './UpdateQuestionsOptions';
 
 
 class AdminPage extends Component {
@@ -24,7 +25,7 @@ class AdminPage extends Component {
             case 1:
                 return <AddQuestions />
             case 2:
-                return <TabContainer>Item three</TabContainer>
+                return <UpdateQuestionOptions />
             case 3:
                 return <TabContainer>Item four</TabContainer>
             default:
@@ -48,7 +49,7 @@ class AdminPage extends Component {
         });
         return (
             <content className="admin-page-main-container">
-                <div style={{ padding: "25px" }}>
+                <div style={{ padding: "25px",width:'870px' }}>
                     <MuiThemeProvider theme={theme}>
                         <Paper>
                             <Tabs
@@ -59,8 +60,8 @@ class AdminPage extends Component {
                                 centered
                             >
                                 <Tab label="Manage Departments" />
-                                <Tab label="Add Question/Answers" />
-                                <Tab label="Edit/Delete Question/Answers" />
+                                <Tab label="Add Questions/Options" />
+                                <Tab label="Edit/Delete Questions/Options" />
                                 <Tab label="Setting" />
                             </Tabs>
                         </Paper>
