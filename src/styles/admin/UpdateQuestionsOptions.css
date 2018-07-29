@@ -1,14 +1,18 @@
 .question-options-row {
     display: flex;
     padding: 5px;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(224, 224, 224, 1);
+    height: 40px;
 }
 
 .option {
     display: flex;
     max-width: 50%;
-    min-width: 50%;
     font-size: 15px;
     font-family: roboto;
+    width: 50%;
 }
 
 .option text {
@@ -25,7 +29,8 @@
 .question {
     flex: 1;
     max-width: 40%;
-    min-width: 40%;
+    width: 40%;
+    font-weight: 500;
 }
 
 .update-questions-options-container{
@@ -37,3 +42,12 @@ header.update-questions-header {
     align-items: center;
     height: 50px;
 }
+
+.edit-question-options-dialog{
+    min-width: 600px
+}
+
+/* .edit-options {
+    display: flex;
+    flex-direction: column;
+} */
