@@ -34,6 +34,7 @@ class UpdateQuestionsOptions extends Component {
     originalOptions = undefined;
     optionsErrorMessage = "Options must be specified";
     questionErrorMessage = "Question must be specified";
+    currentDepartment = undefined;
 
     getView() {
         return (
@@ -110,7 +111,13 @@ class UpdateQuestionsOptions extends Component {
     updateQuestionOptions = () => {
         if (this.hasValidOptions() && this.hasValidQuestion()) {
             if (this.originalQuestion != this.state.editingQuestion || this.originalOptions != this.state.editingOptions) {
-                emitEvent("updateQuestionOptions", {});
+                const options = this.state.editingOptions.map((option) => {
+                    return Object.values(option)[0];
+                }).join(',');
+                emitEvent("updateQuestionOptions", { departmentName: this.currentDepartment, id: this.state.editingId, question: this.state.editingQuestion, options: options });
+                subscribeToEvent("refreshQuestionOption", (data) => {
+                    this.setState({ questionsAndOptions: JSON.parse(data) });
+                })
             }
             this.setState({ openEditDialog: false });
         }
@@ -189,6 +196,7 @@ class UpdateQuestionsOptions extends Component {
     }
 
     getQuestionsOptionsForDepartment = (val) => {
+        this.currentDepartment = val;
         fetch(`http://localhost:8080/getQuestionsOptionsForDepartments?departmentName=${val}`).then((response) => response.json())
             .then((data) => {
                 this.setState({ questionsAndOptions: data });

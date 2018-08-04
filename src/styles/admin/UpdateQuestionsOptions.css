@@ -11,13 +11,13 @@
     display: flex;
     max-width: 50%;
     font-size: 15px;
-    font-family: roboto;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     width: 50%;
+    justify-content: space-around;
 }
 
 .option text {
-    max-width: 25%;
-    min-width: 25%;
+    max-width: 25%;    
 }
 
 .option text, .question text {

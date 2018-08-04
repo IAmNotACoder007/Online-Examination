@@ -167,6 +167,18 @@ io.on('connection', socket => {
         if (!data.id) {
             console.log("id not found in data");
             notifyClient("operationFailed");
+        } else {
+            const updateQuery = `update questions_options set questions='${data.question}', options='${data.options}' where id='${data.id}'`;
+            executeQuery(updateQuery).then(() => {
+                const query = `select* from questions_options where department='${data.departmentName}'`;
+                notifyClient("operationSuccessful", { message: "Question and Options updated successfully" });
+                executeQuery(query).then((record) => {
+                    notifyClient("refreshQuestionOption",(record));
+                });
+            }).catch((err) => {
+                notifyClient("operationFailed");
+                console.log(err)
+            });
         }
     })
 
