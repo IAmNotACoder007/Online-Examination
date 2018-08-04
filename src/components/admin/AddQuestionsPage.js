@@ -196,7 +196,7 @@ class AddQuestions extends Component {
                 return (this.questions.map((ques, index) => {
                     return (
                         <div style={{ paddingBottom: '12px' }}>
-                            <div className="question"><b>Question:</b><text style={{ paddingLeft: "5px" }}> {ques}</text></div>
+                            <div className="question"><b>Question:</b><text style={{ paddingLeft: "5px" }}>{ques}</text></div>
                             <div className="options"><b>Options:</b> {this.getOptionsPreviewJsx(this.options[index])}</div>
                         </div>
                     )
@@ -273,6 +273,7 @@ class AddQuestions extends Component {
         }
     }
     render() {
+        const dialogClass=this.showWarning?"preview-error-dialog":"preview-dialog"
         return (
             <div className="exam-add-question-page" style={{ "padding-top": "25px" }}>
                 <header className="add-question-header">
@@ -282,7 +283,7 @@ class AddQuestions extends Component {
                 <main>
                     <PaperSheet content={this.getPaperContent()} />
                 </main>
-                <MaterialDialog styleClass="preview-error-dialog" isOpen={this.state.showWarning || this.state.showPreview} dialogTitle={this.state.showWarning ? "Error" : "Preview"} dialogContent={this.getDialogContent()} dialogButtons={this.getDialogButtons()} />
+                <MaterialDialog styleClass={dialogClass} isOpen={this.state.showWarning || this.state.showPreview} dialogTitle={this.state.showWarning ? "Error" : "Preview"} dialogContent={this.getDialogContent()} dialogButtons={this.getDialogButtons()} />
 
             </div>
         )

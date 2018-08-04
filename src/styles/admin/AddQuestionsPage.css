@@ -108,3 +108,7 @@
     align-items: center;    
     width: 250px;
 }
+
+.preview-dialog{
+    min-width: 400px;
+}

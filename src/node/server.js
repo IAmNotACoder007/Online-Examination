@@ -173,7 +173,27 @@ io.on('connection', socket => {
                 const query = `select* from questions_options where department='${data.departmentName}'`;
                 notifyClient("operationSuccessful", { message: "Question and Options updated successfully" });
                 executeQuery(query).then((record) => {
-                    notifyClient("refreshQuestionOption",(record));
+                    notifyClient("refreshQuestionOption", (record));
+                });
+            }).catch((err) => {
+                notifyClient("operationFailed");
+                console.log(err)
+            });
+        }
+    });
+
+    socket.on("deleteQuestion", (data) => {
+        if (!data.id) {
+            console.log("id not found in data");
+            notifyClient("operationFailed");
+        } else {
+            const deleteQuery = `delete from questions_options where id='${data.id}'`;
+
+            executeQuery(deleteQuery).then(() => {
+                const query = `select* from questions_options where department='${data.departmentName}'`;
+                notifyClient("operationSuccessful", { message: "Question deleted successfully" });
+                executeQuery(query).then((record) => {
+                    notifyClient("refreshQuestionOption", (record));
                 });
             }).catch((err) => {
                 notifyClient("operationFailed");

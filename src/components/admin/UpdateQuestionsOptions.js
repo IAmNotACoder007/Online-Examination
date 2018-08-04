@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import Departments from '../common/Departments';
-import { NotificationManager } from 'react-notifications';
 import PaperSheet from '../../material_components/PaperSheet';
 import '../../styles/admin/UpdateQuestionsOptions.css';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -11,12 +10,16 @@ import MaterialDialog from '../../material_components/Dialog';
 import TextBox from '../../material_components/TextBox';
 import ActionButton from '../../material_components/ActionButton';
 import RemoveCircle from '@material-ui/icons/Clear';
-import Button from '@material-ui/core/Button';
-import AddIcon from '@material-ui/icons/Add';
 import { subscribeToEvent, emitEvent } from '../../Api';
 import uuid from 'uuid/v4';
 
 class UpdateQuestionsOptions extends Component {
+    constructor(props) {
+        super(props);
+        subscribeToEvent("refreshQuestionOption", (data) => {
+            this.setState({ questionsAndOptions: JSON.parse(data) });
+        });
+    }
     initialState = {
         openEditDialog: false,
         openAlertDialog: false,
@@ -75,6 +78,12 @@ class UpdateQuestionsOptions extends Component {
                     })}
                 </div>
             )
+        } else if (this.state.openAlertDialog) {
+            return (
+                <div className="alert-dialog">
+                    <text>Are you sure you want to delete this question?</text>
+                </div>
+            )
         }
     }
 
@@ -105,6 +114,13 @@ class UpdateQuestionsOptions extends Component {
                     <ActionButton text="Cancel" flatButton={true} onClick={this.closeDialog} />
                 </div>
             )
+        } else if (this.state.openAlertDialog) {
+            return (
+                <div className="alert-dialog-buttons">
+                    <ActionButton text="Delete" flatButton={true} onClick={this.deleteQuestion} />
+                    <ActionButton text="Cancel" flatButton={true} onClick={this.closeDialog} />
+                </div>
+            )
         }
     }
 
@@ -115,9 +131,7 @@ class UpdateQuestionsOptions extends Component {
                     return Object.values(option)[0];
                 }).join(',');
                 emitEvent("updateQuestionOptions", { departmentName: this.currentDepartment, id: this.state.editingId, question: this.state.editingQuestion, options: options });
-                subscribeToEvent("refreshQuestionOption", (data) => {
-                    this.setState({ questionsAndOptions: JSON.parse(data) });
-                })
+
             }
             this.setState({ openEditDialog: false });
         }
@@ -163,6 +177,16 @@ class UpdateQuestionsOptions extends Component {
         this.setState({ editingOptions: options })
     }
 
+    openConfirmationDialog = (id) => {
+        this.state.editingId = id;
+        this.setState({ openAlertDialog: true });
+    }
+    deleteQuestion = () => {
+        emitEvent("deleteQuestion", { id: this.state.editingId, departmentName: this.currentDepartment });
+        this.closeDialog();
+    }
+
+
     getQuestionsOptionsJsx = () => {
         if (this.state.questionsAndOptions && this.state.questionsAndOptions.length) {
             return ((this.state.questionsAndOptions).map((qusOption) => {
@@ -181,7 +205,7 @@ class UpdateQuestionsOptions extends Component {
                             <IconButton onClick={() => { this.editQuestionsOptions(qusOption) }}>
                                 <EditIcon />
                             </IconButton>
-                            <IconButton onClick={this.addNewOption}>
+                            <IconButton onClick={() => { this.openConfirmationDialog(qusOption.id) }}>
                                 <DeleteIcon />
                             </IconButton>
                         </div>
@@ -203,11 +227,22 @@ class UpdateQuestionsOptions extends Component {
             });
     }
 
+    getDialog = () => {
+        if (this.state.openAlertDialog || this.state.openEditDialog) {
+            const dialogClass = this.state.openEditDialog ? "edit-question-options-dialog" : '';
+            const title = this.state.openAlertDialog ? "Delete" : "Edit";
+            return (
+                <MaterialDialog dialogTitle={title} styleClass={dialogClass} isAlertDialog={this.state.openAlertDialog} isOpen={true} dialogContent={this.getDialogContent()} dialogButtons={this.getDialogButtons()} />
+            )
+        }
+    }
+
     render() {
+
         return (
             <div className="update-questions-options-container">
                 {this.getView()}
-                <MaterialDialog styleClass="edit-question-options-dialog" isOpen={this.state.openEditDialog} dialogContent={this.getDialogContent()} dialogButtons={this.getDialogButtons()} />
+                {this.getDialog()}
             </div>
         )
     }
