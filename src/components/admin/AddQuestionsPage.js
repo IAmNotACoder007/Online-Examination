@@ -227,15 +227,12 @@ class AddQuestions extends Component {
         this.updateQuestionOptions = () => {
             const data = { questions: this.questions, options: this.options, department: (this.selectedDepartment||this.state.departments[0]) }
             emitEvent("addQuestionAndOptions", data);
+            this.setState({ showPreview: false });
             subscribeToEvent("questionsAddedSuccessfully",()=>{
-                NotificationManager.success('Questions Saved.', 'Success');
-                this.setState({ showPreview: false });
+                NotificationManager.success('Questions Saved.', 'Success');                
             })
 
-            subscribeToEvent("operationFailed",()=>{
-                NotificationManager.error('Something wend wrong.', 'Error');
-                this.setState({ showPreview: false });
-            })
+           
         }
 
         this.resetFile = () => {

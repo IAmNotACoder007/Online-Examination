@@ -30,8 +30,8 @@ app.get('/getDepartments', (req, res) => {
     });
 });
 app.get('/getQuestionsOptionsForDepartments', (req, res) => {
-    const departmentName=req.query.departmentName;
-    if(!departmentName)  res.send(null);
+    const departmentName = req.query.departmentName;
+    if (!departmentName) res.send(null);
     const query = `select* from questions_options where department='${departmentName}'`;
     executeQuery(query).then((record) => {
         res.send(JSON.stringify(record));
@@ -160,6 +160,13 @@ io.on('connection', socket => {
                 notifyClient("operationFailed");
                 console.log(err);
             })
+        }
+    });
+
+    socket.on("updateQuestionOptions", (data) => {
+        if (!data.id) {
+            console.log("id not found in data");
+            notifyClient("operationFailed");
         }
     })
 
