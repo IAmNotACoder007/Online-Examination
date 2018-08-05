@@ -12,6 +12,7 @@ import RemoveCircle from '@material-ui/icons/Clear';
 import { subscribeToEvent, emitEvent } from '../../Api';
 import uuid from 'uuid/v4';
 import DeleteAction from '../common/DeleteAction'
+import EditAction from '../common/EditAction'
 
 class UpdateQuestionsOptions extends Component {
     constructor(props) {
@@ -20,9 +21,7 @@ class UpdateQuestionsOptions extends Component {
             this.setState({ questionsAndOptions: JSON.parse(data) });
         });
     }
-    initialState = {
-        openEditDialog: false,
-        openAlertDialog: false,
+    initialState = {               
         editingId: '',
         editingQuestion: '',
         editingOptions: [],
@@ -38,6 +37,11 @@ class UpdateQuestionsOptions extends Component {
     optionsErrorMessage = "Options must be specified";
     questionErrorMessage = "Question must be specified";
     currentDepartment = undefined;
+    addNewOptionButton = [{
+        text: "Add Option", onClick: () => {
+            this.addNewOption();
+        }
+    }];
 
     getView() {
         return (
@@ -60,30 +64,24 @@ class UpdateQuestionsOptions extends Component {
         info.options.split(',').forEach(element => {
             editingOptions.push({ [uuid()]: element })
         });
-        this.setState({ openEditDialog: true, editingId: info.id, editingQuestion: info.questions, editingOptions: editingOptions });
+        this.setState({ editingId: info.id, editingQuestion: info.questions, editingOptions: editingOptions });
     }
-    getDialogContent = () => {
-        if (this.state.openEditDialog) {
-            return (
-                <div className="edit-question-options-form">
-                    <TextBox error={this.state.hasInvalidQuestion} errorMessage={this.questionErrorMessage} label="Question" fullWidth={true} key={this.state.editingId} id="edited-question" fieldName="editingQuestion" defaultValue={this.state.editingQuestion} onChange={this.updateQuestion} />
+    getEditDialogContent = (info) => {
+        return (
+            <div className="edit-question-options-form">
+                <TextBox error={this.state.hasInvalidQuestion} errorMessage={this.questionErrorMessage} label="Question" fullWidth={true} key={this.state.editingId} id="edited-question" fieldName="editingQuestion" defaultValue={this.state.editingQuestion} onChange={this.updateQuestion} />
 
-                    {this.state.editingOptions.map((option, index) => {
-                        return (<div key={Object.keys(option)[0]} style={{ display: 'flex', alignItems: "center" }}><div style={{ flex: 1 }}><TextBox fullWidth={true} error={this.state[Object.keys(option)[0]] || false} errorMessage={this.optionsErrorMessage} label={"Option" + (index + 1)} id={Object.keys(option)[0]} fieldName={Object.keys(option)[0]} defaultValue={Object.values(option)[0]} onChange={this.updateOptionValue} /></div>
-                            <Tooltip title="Remove Option">
-                                <IconButton onClick={() => { this.removeOption(Object.keys(option)[0]) }}>
-                                    <RemoveCircle color="Error" /></IconButton>
-                            </Tooltip></div>
-                        )
-                    })}
-                </div>
-            )
-        } 
-    }
-
-    closeDialog = () => {
-        this.setState(this.initialState);
-    }
+                {this.state.editingOptions.map((option, index) => {
+                    return (<div key={Object.keys(option)[0]} style={{ display: 'flex', alignItems: "center" }}><div style={{ flex: 1 }}><TextBox fullWidth={true} error={this.state[Object.keys(option)[0]] || false} errorMessage={this.optionsErrorMessage} label={"Option" + (index + 1)} id={Object.keys(option)[0]} fieldName={Object.keys(option)[0]} defaultValue={Object.values(option)[0]} onChange={this.updateOptionValue} /></div>
+                        <Tooltip title="Remove Option">
+                            <IconButton onClick={() => { this.removeOption(Object.keys(option)[0]) }}>
+                                <RemoveCircle color="Error" /></IconButton>
+                        </Tooltip></div>
+                    )
+                })}
+            </div>
+        )
+    }    
 
     updateOptionValue = (id, val) => {
         let options = this.state.editingOptions.map((option) => {
@@ -97,19 +95,7 @@ class UpdateQuestionsOptions extends Component {
     updateQuestion = (name, val) => {
         const hasInvalidQuestion = !val ? true : false;
         this.setState({ [name]: val, hasInvalidQuestion: hasInvalidQuestion });
-    }
-
-    getDialogButtons = () => {
-        if (this.state.openEditDialog) {
-            return (
-                <div className="edit-buttons">
-                    <ActionButton text="Add Option" flatButton={true} onClick={this.addNewOption} />
-                    <ActionButton text="Save" flatButton={true} onClick={this.updateQuestionOptions} />
-                    <ActionButton text="Cancel" flatButton={true} onClick={this.closeDialog} />
-                </div>
-            )
-        } 
-    }
+    }   
 
     updateQuestionOptions = () => {
         if (this.hasValidOptions() && this.hasValidQuestion()) {
@@ -118,10 +104,11 @@ class UpdateQuestionsOptions extends Component {
                     return Object.values(option)[0];
                 }).join(',');
                 emitEvent("updateQuestionOptions", { departmentName: this.currentDepartment, id: this.state.editingId, question: this.state.editingQuestion, options: options });
-
             }
-            this.setState({ openEditDialog: false });
+            this.setState(this.initialState);
+            return true;      
         }
+        return false;
     }
 
     hasValidOptions = () => {
@@ -163,14 +150,9 @@ class UpdateQuestionsOptions extends Component {
         });
         this.setState({ editingOptions: options })
     }
-
-    openConfirmationDialog = (id) => {
-        this.state.editingId = id;
-        this.setState({ openAlertDialog: true });
-    }
+    
     deleteQuestion = (id) => {
-        emitEvent("deleteQuestion", { id: id, departmentName: this.currentDepartment });
-        this.closeDialog();
+        emitEvent("deleteQuestion", { id: id, departmentName: this.currentDepartment });        
     }
 
 
@@ -189,9 +171,7 @@ class UpdateQuestionsOptions extends Component {
                             })}
                         </div>
                         <div className="icons" style={{ width: '100px', minWidth: '100px', display: 'flex' }}>
-                            <IconButton onClick={() => { this.editQuestionsOptions(qusOption) }}>
-                                <EditIcon />
-                            </IconButton>                            
+                            <EditAction dialogClass="edit-question-options-dialog" onSave={this.updateQuestionOptions} contentSource={this.getEditDialogContent} onOpen={() => { this.editQuestionsOptions(qusOption) }} extraButtons={this.addNewOptionButton} />
                             <DeleteAction onDelete={() => { this.deleteQuestion(qusOption.id) }} />
                         </div>
                     </div>
@@ -210,24 +190,13 @@ class UpdateQuestionsOptions extends Component {
             .then((data) => {
                 this.setState({ questionsAndOptions: data });
             });
-    }
-
-    getDialog = () => {
-        if (this.state.openAlertDialog || this.state.openEditDialog) {
-            const dialogClass = this.state.openEditDialog ? "edit-question-options-dialog" : '';
-            const title = this.state.openAlertDialog ? "Delete" : "Edit";
-            return (
-                <MaterialDialog dialogTitle={title} styleClass={dialogClass} isAlertDialog={this.state.openAlertDialog} isOpen={true} dialogContent={this.getDialogContent()} dialogButtons={this.getDialogButtons()} />
-            )
-        }
-    }
+    }   
 
     render() {
 
         return (
             <div className="update-questions-options-container">
-                {this.getView()}
-                {this.getDialog()}
+                {this.getView()}              
             </div>
         )
     }
