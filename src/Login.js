@@ -7,9 +7,8 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import PasswordIcon from '@material-ui/icons/Https';
 import { Link } from 'react-router-dom';
 import { subscribeToEvent, emitEvent } from './Api.js';
-import {Redirect } from 'react-router-dom';
-
-
+import cookie from 'react-cookies';
+import { Redirect } from 'react-router-dom';
 
 class Login extends Component {
     constructor(props) {
@@ -18,16 +17,29 @@ class Login extends Component {
             userNameError: false,
             passwordError: false,
             userName: "",
-            password: ""
+            password: "",
+            navigate: false
         }
+        this.redirectTo = "";
         this.userNameErrorMessage = "Username must be specified";
         this.passwordErrorMessage = "Password must be specified";
         this.doLogin = () => {
             this.validateFields();
             emitEvent("doLogin", { userId: this.state.userName, password: this.state.password });
-            <Redirect to="/admin"/>
         }
-        
+
+        subscribeToEvent("loginSuccessful", (data) => {
+            const urlSearchParams = new URLSearchParams(window.location.search);
+            this.redirectTo = new URL(urlSearchParams.get('returnUrl'));
+            cookie.save('userId', "aa");
+            this.setState({ navigate: true });
+        });
+
+        subscribeToEvent("userNotRegister", () => {
+            this.userNameErrorMessage = "Username or password is incorrect";
+            this.setState({ userNameError: true });
+        });
+
         this.getLoginPaperContent = () => {
             const primaryTheme = {
                 light: '#80CBC4',
@@ -78,6 +90,12 @@ class Login extends Component {
 
     }
     render() {
+        if (this.state.navigate) {
+            return <Redirect to={{
+                pathname: this.redirectTo.pathname,
+                search: this.redirectTo.search
+            }} push={true} />
+        }
         return (
             <div className="login-container" >
                 <PaperSheet classes="login-page-paper" content={this.getLoginPaperContent()} />

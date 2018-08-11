@@ -39,7 +39,7 @@ class MaterialDialog extends Component {
 }
 
 MaterialDialog.propTypes = {
-    dialogContent: PropTypes.object.isRequired,
+    dialogContent: PropTypes.any.isRequired,
     dialogButtons: PropTypes.object.isRequired,
     dialogTitle: PropTypes.string,
     isOpen: PropTypes.bool,

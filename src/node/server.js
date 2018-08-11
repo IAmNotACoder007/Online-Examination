@@ -51,6 +51,30 @@ io.on('connection', socket => {
 
     socket.on('doLogin', (data) => {
         console.log(`Got a login request from user with data ${data.userId} and ${data.password}`);
+        makeSureDatabaseExits();
+        connectSql().then((request) => {
+            request.bulk(getUserInfoTable(), (err, result) => {
+                sql.close();
+                if (err) {
+                    console.log(err)
+                    notifyClient("operationFailed");
+                } else {
+                    const selectQuery = `select* from user_info where user_name='${data.userId}' and password='${data.password}'`;
+                    executeQuery(selectQuery).then((record) => {
+                        if (record && record.length > 0)
+                            notifyClient("loginSuccessful", record);
+                            else
+                            notifyClient("userNotRegister", record);
+                    }).catch((err) => {
+                        notifyClient("operationFailed");
+                        console.log(err)
+                    });
+
+                }
+            });
+        });
+
+        // notifyClient("loginSuccessful", { userId: '' });
     });
 
     socket.on("addNewUser", (userInfo) => {
@@ -206,6 +230,7 @@ io.on('connection', socket => {
 
 
 const connectSql = (conf) => {
+    sql.close();
     const sqlDef = new Deferred();
     sql.connect(conf || config.configWithDatabaseName(), function (err) {
         if (err) {
@@ -241,6 +266,28 @@ const executeQuery = (query, conf) => {
         });
     });
     return def;
+}
+
+const makeSureDatabaseExits = () => {
+    executeQuery(`
+             IF  NOT EXISTS (SELECT * FROM sys.databases WHERE name = N'OnlineQuiz')
+                 BEGIN
+                     CREATE DATABASE [OnlineQuiz]
+                END;                             
+             `, config.basicConfig());
+}
+
+const getUserInfoTable = () => {
+    const userInfoTable = new sql.Table("user_info");
+    userInfoTable.create = true;
+    userInfoTable.columns.add('user_id', sql.NVarChar(50), { nullable: false });
+    userInfoTable.columns.add('full_name', sql.NVarChar(255), { nullable: false });
+    userInfoTable.columns.add('user_name', sql.NVarChar(255), { nullable: false });
+    userInfoTable.columns.add('password', sql.NVarChar(255), { nullable: false });
+    userInfoTable.columns.add('email_address', sql.NVarChar(255), { nullable: false });
+    userInfoTable.columns.add('phone', sql.Decimal(10, 0), { nullable: false });
+    userInfoTable.columns.add('dob', sql.DateTime, { nullable: false });
+    return userInfoTable
 }
 
 server.listen(port, () => console.log(`Listening on port ${port}`))

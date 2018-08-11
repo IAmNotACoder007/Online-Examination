@@ -4,10 +4,8 @@ import Routes from './Routes'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import { subscribeToEvent } from './Api';
 
-class App extends Component {
-  loggedIn = () => {
-    return false;
-  }
+
+class App extends Component {  
   render() {
     subscribeToEvent("operationFailed", (data) => {
       let message = undefined;
@@ -22,6 +20,7 @@ class App extends Component {
         message = JSON.parse(data).message;
       NotificationManager.success((message || 'Successfully done.'), 'Success');
     })
+   
     return (
       <div className="App">
         <Routes />

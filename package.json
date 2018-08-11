@@ -10,6 +10,7 @@
     "node-defer": "^1.0.1",
     "query-string": "^6.1.0",
     "react": "^16.4.0",
+    "react-cookies": "^0.1.0",
     "react-dom": "^16.4.0",
     "react-notifications": "^1.4.3",
     "react-router-dom": "^4.2.2",
