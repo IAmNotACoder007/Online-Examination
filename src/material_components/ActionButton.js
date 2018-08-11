@@ -5,7 +5,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 class ActionButton extends Component {
     getButtonType = () => {
-        return this.props.flatButton ? '' : "raised"
+        return this.props.flatButton ? 'flat' : "raised"
     }
 
     render() {
@@ -19,7 +19,7 @@ class ActionButton extends Component {
         });
         return (
             <MuiThemeProvider theme={theme}>
-                <Button disabled={this.props.disabled} variant={this.getButtonType()} id={this.props.id} size={this.props.size} color={this.props.color} onClick={this.props.onClick} className={this.props.button}>
+                <Button disabled={this.props.disabled} variant={this.getButtonType()} id={this.props.id} size={this.props.size} color={this.props.color} onClick={this.props.onClick} className={this.props.class}>
                     {this.props.text}
                 </Button>
             </MuiThemeProvider>

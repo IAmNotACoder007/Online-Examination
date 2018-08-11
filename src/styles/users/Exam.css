@@ -1,8 +1,38 @@
-.exam-holder{
+.exam-holder {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100%;
     width: 100%;
     flex-direction: column;
+}
+
+.question-options-container {
+    background: #eeeeee;
+    padding: 30px;    
+    width: 500px;
+    margin-left: 10px;   
+    display: flex;
+    flex-direction: column;
+    height: 310px;
+}
+
+.buttons-container .buttons {
+    float: right;
+    margin-left: 10px;
+}
+
+.buttons-container {
+    align-self: flex-end;
+}
+
+.question-options-container .question-legend {
+    width: 100%;
+    text-align: left;
+    font-size: 18px;
+    text-transform: capitalize;
+}
+
+.radio-buttons-fieldset {
+    flex: 1;
 }
