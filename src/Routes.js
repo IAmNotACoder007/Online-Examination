@@ -4,6 +4,7 @@ import Login from './Login';
 import Register from './components/RegisterPage';
 import AdminPage from './components/admin/AdminPage';
 import ExamPage from './components/users/ExamPage'
+import SelectExam from './components/users/SelectExam'
 import cookie from 'react-cookies'
 
 class Routes extends Component {
@@ -22,6 +23,7 @@ class Routes extends Component {
                     <Route path='/login' render={() => <Login />} />
                     <Route path='/register' render={() => <Register />} />
                     <Route path='/admin' render={() => <AdminPage />} />
+                     <Route path='/selectExam' render={() => <SelectExam />} />
                     <Route path='/exam' render={() => {                       
                         if (this.isLoggedIn())
                             return (<ExamPage />)

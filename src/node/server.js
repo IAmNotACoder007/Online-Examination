@@ -6,6 +6,7 @@ const sql = require('mssql');
 const config = new Config();
 const uniqueId = require('uuid/v4');
 const Deferred = require('node-defer');
+const Tables = require('./Tables');
 // our localhost port
 const port = 8080;
 
@@ -53,7 +54,7 @@ io.on('connection', socket => {
         console.log(`Got a login request from user with data ${data.userId} and ${data.password}`);
         makeSureDatabaseExits();
         connectSql().then((request) => {
-            request.bulk(getUserInfoTable(), (err, result) => {
+            request.bulk(Tables.getUserInfoTable(), (err, result) => {
                 sql.close();
                 if (err) {
                     console.log(err)
@@ -63,7 +64,7 @@ io.on('connection', socket => {
                     executeQuery(selectQuery).then((record) => {
                         if (record && record.length > 0)
                             notifyClient("loginSuccessful", record);
-                            else
+                        else
                             notifyClient("userNotRegister", record);
                     }).catch((err) => {
                         notifyClient("operationFailed");
@@ -73,29 +74,30 @@ io.on('connection', socket => {
                 }
             });
         });
-
-        // notifyClient("loginSuccessful", { userId: '' });
     });
 
     socket.on("addNewUser", (userInfo) => {
+        makeSureDatabaseExits();
         if (!userInfo) {
             console.log("user info not found in the request.");
             return;
         }
-        const insertQuery = `insert into user_info values('${uniqueId()}','${userInfo.fullName}','${userInfo.userName}','${userInfo.password}'
-    ,'${userInfo.emailAddress}',${userInfo.mobileNumber},'${userInfo.dateOfBirth}')`;
-        executeQuery(insertQuery).then(() => {
-            socket.emit("userAddedSuccessfully");
-        }).catch(() => {
-            socket.emit("userAdditionFailed");
+        let table = Tables.getUserInfoTable();
+        const dob = new Date(userInfo.dateOfBirth);
+        table.rows.add(`${uniqueId()}`, `${userInfo.fullName}`, `${userInfo.userName}`, `${userInfo.password}`, `${userInfo.emailAddress}`, userInfo.mobileNumber, dob, userInfo.isAdmin);
+        connectSql().then((request) => {
+            request.bulk(table, (err, result) => {
+                sql.close();
+                if (err)
+                    notifyClient("operationFailed", { message: "Unable to add user" });
+                else
+                    notifyClient("operationSuccessful", { message: "User added successfully" });
+            })
         })
     });
 
     socket.on("addNewDepartments", (data) => {
-        const table = new sql.Table("departments");
-        table.create = true;
-        table.columns.add('id', sql.NVarChar(50), { nullable: false });
-        table.columns.add('department_name', sql.NVarChar(255), { nullable: false });
+        let table = Tables.getDepartmentsTable();
         data.departments.forEach(department => {
             table.rows.add(`${uniqueId()}`, department);
         });
@@ -120,12 +122,7 @@ io.on('connection', socket => {
     });
 
     socket.on("addQuestionAndOptions", (data) => {
-        const table = new sql.Table("questions_options");
-        table.create = true;
-        table.columns.add('id', sql.NVarChar(50), { nullable: false });
-        table.columns.add('questions', sql.NVarChar(255), { nullable: false });
-        table.columns.add('options', sql.NVarChar(255), { nullable: false });
-        table.columns.add('department', sql.NVarChar(255), { nullable: false });
+        let table = Tables.getQuestionsOptionsTable();
         for (let i = 0; i < data.questions.length; i++) {
             table.rows.add(`${uniqueId()}`, data.questions[i], data.options[i], data.department);
         }
@@ -277,17 +274,5 @@ const makeSureDatabaseExits = () => {
              `, config.basicConfig());
 }
 
-const getUserInfoTable = () => {
-    const userInfoTable = new sql.Table("user_info");
-    userInfoTable.create = true;
-    userInfoTable.columns.add('user_id', sql.NVarChar(50), { nullable: false });
-    userInfoTable.columns.add('full_name', sql.NVarChar(255), { nullable: false });
-    userInfoTable.columns.add('user_name', sql.NVarChar(255), { nullable: false });
-    userInfoTable.columns.add('password', sql.NVarChar(255), { nullable: false });
-    userInfoTable.columns.add('email_address', sql.NVarChar(255), { nullable: false });
-    userInfoTable.columns.add('phone', sql.Decimal(10, 0), { nullable: false });
-    userInfoTable.columns.add('dob', sql.DateTime, { nullable: false });
-    return userInfoTable
-}
 
 server.listen(port, () => console.log(`Listening on port ${port}`))

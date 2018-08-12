@@ -5,7 +5,7 @@ import PaperSheet from '../material_components/PaperSheet';
 import { Link } from 'react-router-dom';
 import '../styles/RegisterPage.css';
 import { subscribeToEvent, emitEvent } from '../Api.js';
-import {NotificationContainer, NotificationManager} from 'react-notifications';
+import { NotificationContainer, NotificationManager } from 'react-notifications';
 import '../../node_modules/react-notifications/dist/react-notifications.css';
 
 
@@ -29,7 +29,7 @@ class Register extends Component {
         this.dobErrorMessage = "Date of birth must be specified";
         this.isValidForm = true;
 
-        subscribeToEvent("userAddedSuccessfully",()=>{
+        subscribeToEvent("userAddedSuccessfully", () => {
             NotificationManager.success('Sign Up successfully');
             this.setState({
                 fullName: '',
@@ -41,7 +41,7 @@ class Register extends Component {
             })
         });
 
-        subscribeToEvent("userAdditionFailed",()=>{
+        subscribeToEvent("userAdditionFailed", () => {
             NotificationManager.error('Something went wrong');
         });
 
@@ -65,7 +65,7 @@ class Register extends Component {
             if (this.isValidForm) {
                 emitEvent("addNewUser", {
                     fullName: this.state.fullName, userName: this.state.userName, password: this.state.password,
-                    emailAddress: this.state.emailAddress, mobileNumber: this.state.mobileNumber, dateOfBirth: new Date(this.state.dob).toISOString()
+                    emailAddress: this.state.emailAddress, mobileNumber: this.state.mobileNumber, dateOfBirth: new Date(this.state.dob).toISOString(), isAdmin: false
                 });
             }
         }
@@ -143,7 +143,7 @@ class Register extends Component {
                             <span className="footer-text">Have an account?</span><Link to="/login" className="create-account-link">Login</Link>
                         </div>
                     </footer>
-                    <NotificationContainer/>
+                    <NotificationContainer />
                 </div>
             )
         }

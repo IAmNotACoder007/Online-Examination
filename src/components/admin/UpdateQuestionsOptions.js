@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
-import EditIcon from '@material-ui/icons/Edit';
 import Departments from '../common/Departments';
 import PaperSheet from '../../material_components/PaperSheet';
 import '../../styles/admin/UpdateQuestionsOptions.css';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
-import MaterialDialog from '../../material_components/Dialog';
 import TextBox from '../../material_components/TextBox';
-import ActionButton from '../../material_components/ActionButton';
 import RemoveCircle from '@material-ui/icons/Clear';
 import { subscribeToEvent, emitEvent } from '../../Api';
 import uuid from 'uuid/v4';
@@ -66,21 +63,18 @@ class UpdateQuestionsOptions extends Component {
         });
         this.setState({ editingId: info.id, editingQuestion: info.questions, editingOptions: editingOptions });
     }
-    getEditDialogContent = (info) => {
-        return (
-            <div className="edit-question-options-form">
-                <TextBox error={this.state.hasInvalidQuestion} errorMessage={this.questionErrorMessage} label="Question" fullWidth={true} key={this.state.editingId} id="edited-question" fieldName="editingQuestion" defaultValue={this.state.editingQuestion} onChange={this.updateQuestion} />
+    getEditDialogContent = () => {
+        return (<div className="edit-question-options-form">
+            <TextBox error={this.state.hasInvalidQuestion} errorMessage={this.questionErrorMessage} label="Question" fullWidth={true} key={this.state.editingId} id="edited-question" fieldName="editingQuestion" defaultValue={this.state.editingQuestion} onChange={this.updateQuestion} />
 
-                {this.state.editingOptions.map((option, index) => {
-                    return (<div key={Object.keys(option)[0]} style={{ display: 'flex', alignItems: "center" }}><div style={{ flex: 1 }}><TextBox fullWidth={true} error={this.state[Object.keys(option)[0]] || false} errorMessage={this.optionsErrorMessage} label={"Option" + (index + 1)} id={Object.keys(option)[0]} fieldName={Object.keys(option)[0]} defaultValue={Object.values(option)[0]} onChange={this.updateOptionValue} /></div>
-                        <Tooltip title="Remove Option">
-                            <IconButton onClick={() => { this.removeOption(Object.keys(option)[0]) }}>
-                                <RemoveCircle color="Error" /></IconButton>
-                        </Tooltip></div>
-                    )
-                })}
-            </div>
-        )
+            {this.state.editingOptions.map((option, index) => {
+                return (<div key={Object.keys(option)[0]} style={{ display: 'flex', alignItems: "center" }}><div style={{ flex: 1 }}><TextBox fullWidth={true} error={this.state[Object.keys(option)[0]] || false} errorMessage={this.optionsErrorMessage} label={"Option" + (index + 1)} id={Object.keys(option)[0]} fieldName={Object.keys(option)[0]} defaultValue={Object.values(option)[0]} onChange={this.updateOptionValue} /></div>
+                    <Tooltip title="Remove Option">
+                        <IconButton onClick={() => { this.removeOption(Object.keys(option)[0]); } }>
+                            <RemoveCircle color="Error" /></IconButton>
+                    </Tooltip></div>);
+            })}
+        </div>);
     }    
 
     updateOptionValue = (id, val) => {
@@ -99,7 +93,7 @@ class UpdateQuestionsOptions extends Component {
 
     updateQuestionOptions = () => {
         if (this.hasValidOptions() && this.hasValidQuestion()) {
-            if (this.originalQuestion != this.state.editingQuestion || this.originalOptions != this.state.editingOptions) {
+            if (this.originalQuestion !== this.state.editingQuestion || this.originalOptions !== this.state.editingOptions) {
                 const options = this.state.editingOptions.map((option) => {
                     return Object.values(option)[0];
                 }).join(',');
@@ -146,7 +140,7 @@ class UpdateQuestionsOptions extends Component {
 
     removeOption = (id) => {
         let options = this.state.editingOptions.filter((option) => {
-            return Object.keys(option)[0] != id
+            return Object.keys(option)[0] !== id
         });
         this.setState({ editingOptions: options })
     }

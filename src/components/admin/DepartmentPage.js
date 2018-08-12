@@ -167,7 +167,7 @@ class Department extends Component {
         this.getDepartmentsJsx = () => {
             if (this.state.hasDepartments) {
                 return (
-                    <div style={{ padding: '5px', 'padding-top': '0' }}>{this.state.departments.map((department) => {
+                    <div style={{ padding: '5px', paddingTop: '0' }}>{this.state.departments.map((department) => {
                         return (<div className="department" id={department.id} key={department.id}>
                             <text>{department.department_name}</text>
                             <IconButton onClick={() => { this.editDepartment(department.id, department.department_name) }}>
