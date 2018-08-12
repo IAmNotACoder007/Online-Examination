@@ -160,8 +160,11 @@ class Exam extends Component {
                 this.questionsAndOptions = this.remainingQuestions = data;
                 this.result = data.map((question) => {
                     return { id: question.id, selectedOption: '' };
-                })
-                this.setState({ currentQuestionId: data[0].id })
+                });
+                if (this.questionsAndOptions.length == 1)
+                    this.setState({ currentQuestionId: data[0].id, disableNextButton: true, disableFinishButton: false })
+                else
+                    this.setState({ currentQuestionId: data[0].id })
             });
     }
 }
