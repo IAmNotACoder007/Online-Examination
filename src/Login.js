@@ -29,19 +29,19 @@ class Login extends Component {
         }
 
         subscribeToEvent("loginSuccessful", (data) => {
-            const user_info = JSON.parse(data)[0];
+            const userInfo = JSON.parse(data)[0];
             const urlSearchParams = new URLSearchParams(window.location.search);
             const returnUrl = urlSearchParams.get('returnUrl');
             if (returnUrl) { this.redirectTo = new URL(returnUrl); }
             else {
-                if (user_info.is_admin) {
+                if (userInfo.is_admin) {
                     this.redirectTo = new URL(`${window.location.origin}/admin`);
 
                 } else {
                     this.redirectTo = new URL(`${window.location.origin}/selectExam`);
                 }
             }
-            cookie.save('userId', user_info.user_id);
+            cookie.save('userId', userInfo.user_id);
             this.setState({ navigate: true });
         });
 

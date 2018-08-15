@@ -9,6 +9,8 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import "../../styles/users/Exam.css";
 import ActionButton from '../../material_components/ActionButton'
 import Dialog from '../../material_components/Dialog'
+import WarningIcon from '@material-ui/icons/Warning';
+
 
 class Exam extends Component {
     departmentName = undefined;
@@ -98,7 +100,9 @@ class Exam extends Component {
     }
 
     getDialogContent = () => {
-        return "Are you sure you want to finish the exam?";
+        return <div style={{ display: 'flex', alignItems: "center" }}>
+            <WarningIcon style={{ height: "60px", width: '60px' }} color="error" />
+            You are about to finish the exam</div>
     }
 
     closeDialog = () => {
@@ -161,7 +165,7 @@ class Exam extends Component {
                 this.result = data.map((question) => {
                     return { id: question.id, selectedOption: '' };
                 });
-                if (this.questionsAndOptions.length == 1)
+                if (this.questionsAndOptions.length === 1)
                     this.setState({ currentQuestionId: data[0].id, disableNextButton: true, disableFinishButton: false })
                 else
                     this.setState({ currentQuestionId: data[0].id })
