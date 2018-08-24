@@ -7,7 +7,7 @@ class Departments extends Component {
         departments: []
     }
     onChange = (val) => {
-        this.props.onChange(this.state.departments[val-1])
+        this.props.onChange(this.state.departments[val - 1])
     }
     render() {
         return (
@@ -21,7 +21,7 @@ class Departments extends Component {
         fetch("http://localhost:8080/getDepartments")
             .then(res => res.json())
             .then((departments) => {
-                this.setState({ departments: departments.map((department) => { return department.department_name }) });
+                this.setState({ departments: Object.keys(departments).length !== 0 ? departments.map((department) => { return department.department_name }) : [] });
                 this.props.onChange(this.state.departments[0]);
             });
     }

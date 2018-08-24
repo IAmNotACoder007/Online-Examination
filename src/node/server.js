@@ -7,6 +7,8 @@ const config = new Config();
 const uniqueId = require('uuid/v4');
 const Deferred = require('node-defer');
 const Tables = require('./Tables');
+const bodyParser = require('body-parser');
+const jsonParser = bodyParser.json()
 // our localhost port
 const port = 8080;
 
@@ -17,6 +19,7 @@ const server = http.createServer(app);
 
 // This creates our socket using the instance of the server
 const io = socketIO(server);
+let webSocket = undefined;
 
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -28,6 +31,8 @@ app.get('/getDepartments', (req, res) => {
     const query = "select* from departments";
     executeQuery(query).then((record) => {
         res.send(JSON.stringify(record));
+    }).catch((err) => {
+        res.send(JSON.stringify({}));
     });
 });
 app.get('/getQuestionsOptionsForDepartments', (req, res) => {
@@ -36,18 +41,44 @@ app.get('/getQuestionsOptionsForDepartments', (req, res) => {
     const query = `select* from questions_options where department='${departmentName}'`;
     executeQuery(query).then((record) => {
         res.send(JSON.stringify(record));
+    }).catch((err) => {
+        res.send(JSON.stringify({}));
     });
 });
-// This is what the socket.io syntax is like, we will work this later
+
+app.post('/registerOrganization', jsonParser, (req, res) => {
+    makeSureDatabaseExits();
+    if (!req.body) {
+        console.log("Organization info not found in the request.");
+        return;
+    }
+    verifyOrganizationExists(req.body.email).then(() => {
+        let table = Tables.getOrganizationsTable();
+        table.rows.add(`${uniqueId()}`, `${req.body.name}`, `${req.body.email}`, req.body.phone, `${req.body.password}`);
+        connectSql().then((request) => {
+            request.bulk(table, (err, result) => {
+                sql.close();
+                if (err)
+                    notifyClient("operationFailed", { message: "Unable to register organization" });
+                else
+                    notifyClient("operationSuccessful", { message: "Organization registered successfully" });
+                res.end(JSON.stringify({ isAlreadyExists: false }));
+            })
+        })
+    }).catch((err) => {
+        res.end(JSON.stringify({ isAlreadyExists: true }));
+    });
+});
+
+
 io.on('connection', socket => {
     console.log('User connected');
+    webSocket = socket;
 
-    const notifyClient = (eventName, data) => {
-        socket.emit(eventName, JSON.stringify(data));
-    }
 
     socket.on('disconnect', () => {
-        console.log('user disconnected')
+        console.log('user disconnected');
+        webSocket = undefined;
     });
 
     socket.on('doLogin', (data) => {
@@ -124,7 +155,7 @@ io.on('connection', socket => {
     socket.on("addQuestionAndOptions", (data) => {
         let table = Tables.getQuestionsOptionsTable();
         for (let i = 0; i < data.questions.length; i++) {
-            table.rows.add(`${uniqueId()}`, data.questions[i], data.options[i], data.department);
+            table.rows.add(`${uniqueId()}`, data.questions[i], data.options[i], data.department, data.correctOptions[i]);
         }
         connectSql().then((request) => {
             request.bulk(table, (err, result) => {
@@ -225,6 +256,22 @@ io.on('connection', socket => {
 
 });
 
+const notifyClient = (eventName, data) => {
+    if (webSocket)
+        webSocket.emit(eventName, JSON.stringify(data));
+}
+
+const verifyOrganizationExists = (email) => {
+    const def = new Deferred();
+    const selectQuery = `select * from organizations where organization_email='${email}'`;
+    executeQuery(selectQuery).then((data) => {
+        if (data && data.length)
+            def.reject(data);
+        else
+            def.resolve()
+    })
+    return def
+}
 
 const connectSql = (conf) => {
     sql.close();

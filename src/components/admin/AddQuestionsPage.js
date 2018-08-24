@@ -24,6 +24,7 @@ class AddQuestions extends Component {
         this.questions = [];
         this.options = [];
         this.disableContinueButton = false;
+        this.correctOptions = [];
 
 
         this.state = {
@@ -37,7 +38,7 @@ class AddQuestions extends Component {
         }
 
         this.onComboValueChange = (val) => {
-            this.selectedDepartment = this.state.departments[val-1];
+            this.selectedDepartment = this.state.departments[val - 1];
         }
 
         this.handleChange = (fieldName, val) => {
@@ -129,16 +130,20 @@ class AddQuestions extends Component {
         this.fillQuestionsOptions = (workbook) => {
             this.questions = [];
             this.options = [];
+            this.correctOptions = [];
             const jsonData = this.to_json(workbook)
             Object.keys(jsonData).forEach((key) => {
                 var columns = jsonData[key];
                 columns.forEach((column) => {
-                    const question = column.Questions || column.questions;
-                    const option = column.Options || column.options;
+                    const question = column[Object.keys(column).find(key => key.toLowerCase() === "questions")];
+                    const option = column[Object.keys(column).find(key => key.toLowerCase() === "options")];
+                    const correctOption = column[Object.keys(column).find(key => key.toLowerCase() === "correctoption")];
                     if (question)
                         this.questions.push(question);
                     if (option)
                         this.options.push(option);
+                    if (correctOption)
+                        this.correctOptions.push(correctOption);
                 });
             });
 
@@ -198,6 +203,8 @@ class AddQuestions extends Component {
                         <div style={{ paddingBottom: '12px' }}>
                             <div className="question"><b>Question:</b><text style={{ paddingLeft: "5px" }}>{ques}</text></div>
                             <div className="options"><b>Options:</b> {this.getOptionsPreviewJsx(this.options[index])}</div>
+                            <br />
+                            <div className="correct-option"><b>Correct Option:</b><div style={{ paddingLeft: "5px" }}>{this.correctOptions[index]}</div> </div>
                         </div>
                     )
                 }))
@@ -225,14 +232,14 @@ class AddQuestions extends Component {
         }
 
         this.updateQuestionOptions = () => {
-            const data = { questions: this.questions, options: this.options, department: (this.selectedDepartment||this.state.departments[0]) }
+            const data = { questions: this.questions, options: this.options,correctOptions:this.correctOptions, department: (this.selectedDepartment || this.state.departments[0]) }
             emitEvent("addQuestionAndOptions", data);
             this.setState({ showPreview: false });
-            subscribeToEvent("questionsAddedSuccessfully",()=>{
-                NotificationManager.success('Questions Saved.', 'Success');                
+            subscribeToEvent("questionsAddedSuccessfully", () => {
+                NotificationManager.success('Questions Saved.', 'Success');
             })
 
-           
+
         }
 
         this.resetFile = () => {
@@ -273,7 +280,7 @@ class AddQuestions extends Component {
         }
     }
     render() {
-        const dialogClass=this.showWarning?"preview-error-dialog":"preview-dialog"
+        const dialogClass = this.showWarning ? "preview-error-dialog" : "preview-dialog"
         return (
             <div className="exam-add-question-page" style={{ "padding-top": "25px" }}>
                 <header className="add-question-header">
@@ -293,7 +300,7 @@ class AddQuestions extends Component {
         fetch("http://localhost:8080/getDepartments")
             .then(res => res.json())
             .then((departments) => {
-                this.setState({ departments: departments.map(department => department.department_name) });
+                this.setState({ departments: Object.keys(departments).length !== 0 ? departments.map(department => department.department_name) : [] });
             });
     }
 }

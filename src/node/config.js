@@ -4,7 +4,7 @@ class Configuration {
         return {
             user: 'sa',
             password: 'admin123',
-            server: 'DESKTOP-LR002GL',
+            server: 'localhost',           
         }
     };
 
@@ -13,7 +13,7 @@ class Configuration {
             user: this.basicConfig().user,
             password: this.basicConfig().password,
             server: this.basicConfig().server,
-            database: 'OnlineQuiz'
+            database: 'OnlineQuiz',            
         }
     };
 }

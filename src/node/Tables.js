@@ -34,6 +34,17 @@ class Tables {
         return departmentsTable;
     }
 
+    static getOrganizationsTable(){
+        const departmentsTable = new sql.Table("organizations");
+        departmentsTable.create = true;
+        departmentsTable.columns.add('organization_id', sql.NVarChar(50), { nullable: false });
+        departmentsTable.columns.add('organization_name', sql.NVarChar(255), { nullable: false });
+        departmentsTable.columns.add('organization_email', sql.NVarChar(255), { nullable: false });
+        departmentsTable.columns.add('organization_phone', sql.NVarChar(255), { nullable: false });
+        departmentsTable.columns.add('organization_password', sql.NVarChar(255), { nullable: false });
+        return departmentsTable;
+    }
+
 }
 
 module.exports=Tables;

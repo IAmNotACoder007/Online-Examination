@@ -1,0 +1,5 @@
+.organization-registration-holder {
+    display: flex;
+    flex-direction: column;
+    width: 325px;
+}

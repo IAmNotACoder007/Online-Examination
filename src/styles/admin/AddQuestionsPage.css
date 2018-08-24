@@ -91,13 +91,19 @@
     color: #F44336;
 }
 
-.question,.options {
+.question, .options, .correct-option {
     font-size: 15px;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     display: flex;
-    text-transform: capitalize;    
+    text-transform: capitalize;
 }
-.options{    
+
+.preview-container .question {
+    width: 100%;
+    max-width: 100%;
+}
+
+.options {
     padding-top: 2px;
 }
 
@@ -105,10 +111,10 @@
     font-size: 15px;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     display: flex;
-    align-items: center;    
+    align-items: center;
     width: 250px;
 }
 
-.preview-dialog{
+.preview-dialog {
     min-width: 400px;
 }
