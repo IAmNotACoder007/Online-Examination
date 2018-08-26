@@ -4,7 +4,7 @@ class Tables {
     static getUserInfoTable () {
         const userInfoTable = new sql.Table("user_info");
         userInfoTable.create = true;
-        departmentsTable.columns.add('organization_id', sql.NVarChar(50), { nullable: false });
+        userInfoTable.columns.add('organization_id', sql.NVarChar(50), { nullable: false });
         userInfoTable.columns.add('user_id', sql.NVarChar(50), { nullable: false });
         userInfoTable.columns.add('full_name', sql.NVarChar(255), { nullable: false });
         userInfoTable.columns.add('password', sql.NVarChar(255), { nullable: false });
@@ -17,7 +17,7 @@ class Tables {
     static getQuestionsOptionsTable () {
         const questionsOptionsTable = new sql.Table("questions_options");
         questionsOptionsTable.create = true;
-        departmentsTable.columns.add('organization_id', sql.NVarChar(50), { nullable: false });
+        questionsOptionsTable.columns.add('organization_id', sql.NVarChar(50), { nullable: false });
         questionsOptionsTable.columns.add('id', sql.NVarChar(50), { nullable: false });
         questionsOptionsTable.columns.add('questions', sql.NVarChar(255), { nullable: false });
         questionsOptionsTable.columns.add('options', sql.NVarChar(255), { nullable: false });
@@ -36,14 +36,14 @@ class Tables {
     }
 
     static getOrganizationsTable(){
-        const departmentsTable = new sql.Table("organizations");
-        departmentsTable.create = true;
-        departmentsTable.columns.add('organization_id', sql.NVarChar(50), { nullable: false });
-        departmentsTable.columns.add('organization_name', sql.NVarChar(255), { nullable: false });
-        departmentsTable.columns.add('organization_email', sql.NVarChar(255), { nullable: false });
-        departmentsTable.columns.add('organization_phone', sql.NVarChar(255), { nullable: false });
-        departmentsTable.columns.add('organization_password', sql.NVarChar(255), { nullable: false });
-        return departmentsTable;
+        const organizationTable = new sql.Table("organizations");
+        organizationTable.create = true;
+        organizationTable.columns.add('organization_id', sql.NVarChar(50), { nullable: false });
+        organizationTable.columns.add('organization_name', sql.NVarChar(255), { nullable: false });
+        organizationTable.columns.add('organization_email', sql.NVarChar(255), { nullable: false });
+        organizationTable.columns.add('organization_phone', sql.NVarChar(255), { nullable: false });
+        organizationTable.columns.add('organization_password', sql.NVarChar(255), { nullable: false });
+        return organizationTable;
     }
 
 }

@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import TextBox from '../material_components/TextBox';
 import ActionButton from '../material_components/ActionButton';
-import { subscribeToEvent, emitEvent } from '../Api.js';
-import { NotificationContainer, NotificationManager } from 'react-notifications';
+import { emitEvent } from '../Api.js';
 import '../../node_modules/react-notifications/dist/react-notifications.css';
 import MaterialDialog from '../material_components/Dialog';
 import PropTypes from 'prop-types';
@@ -21,20 +20,6 @@ class Register extends Component {
         this.fullNameErrorMessage = "Full name must be specified";
         this.emailErrorMessage = "Email address must be specified";
         this.mobileErrorMessage = "Mobile number must be specified";
-
-        subscribeToEvent("userAddedSuccessfully", () => {
-            NotificationManager.success('Sign Up successfully');
-            this.setState({
-                fullName: '',
-                password: '',
-                emailAddress: '',
-                mobileNumber: '',
-            });
-        });
-
-        subscribeToEvent("userAdditionFailed", () => {
-            NotificationManager.error('Something went wrong');
-        });
 
         this.initialState = {
             passwordError: false,
@@ -65,9 +50,11 @@ class Register extends Component {
         this.registerUser = () => {
             if (this.isValidForm()) {
                 emitEvent("addNewUser", {
-                    fullName: this.state.fullName, userName: this.state.userName, password: this.state.password,
-                    emailAddress: this.state.emailAddress, mobileNumber: this.state.mobileNumber, dateOfBirth: new Date(this.state.dob).toISOString(), isAdmin: false
+                    organizationId: this.props.organizationId,
+                    fullName: this.state.fullName, password: this.state.password,
+                    emailAddress: this.state.emailAddress, mobileNumber: this.state.mobileNumber, isAdmin: this.props.isAdmin
                 });
+                this.closeDialog();
             }
         }
 
@@ -101,7 +88,6 @@ class Register extends Component {
         return (
             <div className="register-container" >
                 <MaterialDialog dialogTitle={this.props.title} styleClass="register-dialog" dialogContent={this.getDialogContent()} dialogButtons={this.getDialogButtons()} isOpen={this.props.open} />
-                <NotificationContainer />
             </div>
         )
     }
@@ -112,9 +98,11 @@ export default Register;
 Register.propTypes = {
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
+    isAdmin: PropTypes.bool.isRequired,
     title: PropTypes.string
 }
 Register.defaultProps = {
     open: false,
-    title: ''
+    title: '',
+    isAdmin: false
 }

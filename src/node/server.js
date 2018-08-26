@@ -31,7 +31,7 @@ app.get('/getDepartments', (req, res) => {
     const query = "select* from departments";
     executeQuery(query).then((record) => {
         res.send(JSON.stringify(record));
-    }).catch((err) => {
+    }).catch(() => {
         res.send(JSON.stringify({}));
     });
 });
@@ -41,7 +41,7 @@ app.get('/getQuestionsOptionsForDepartments', (req, res) => {
     const query = `select* from questions_options where department='${departmentName}'`;
     executeQuery(query).then((record) => {
         res.send(JSON.stringify(record));
-    }).catch((err) => {
+    }).catch(() => {
         res.send(JSON.stringify({}));
     });
 });
@@ -56,7 +56,7 @@ app.post('/registerOrganization', jsonParser, (req, res) => {
         let table = Tables.getOrganizationsTable();
         table.rows.add(`${uniqueId()}`, `${req.body.name}`, `${req.body.email}`, req.body.phone, `${req.body.password}`);
         connectSql().then((request) => {
-            request.bulk(table, (err, result) => {
+            request.bulk(table, (err) => {
                 sql.close();
                 if (err)
                     notifyClient("operationFailed", { message: "Unable to register organization" });
@@ -65,7 +65,7 @@ app.post('/registerOrganization', jsonParser, (req, res) => {
                 res.end(JSON.stringify({ isAlreadyExists: false }));
             })
         })
-    }).catch((err) => {
+    }).catch(() => {
         res.end(JSON.stringify({ isAlreadyExists: true }));
     });
 });
@@ -85,7 +85,7 @@ io.on('connection', socket => {
         console.log(`Got a login request from user with data ${data.userId} and ${data.password}`);
         makeSureDatabaseExits();
         connectSql().then((request) => {
-            request.bulk(Tables.getUserInfoTable(), (err, result) => {
+            request.bulk(Tables.getUserInfoTable(), (err) => {
                 sql.close();
                 if (err) {
                     console.log(err)
@@ -111,7 +111,7 @@ io.on('connection', socket => {
         console.log(`Got a Organization login request from user with data ${data.userId} and ${data.password}`);
         makeSureDatabaseExits();
         connectSql().then((request) => {
-            request.bulk(Tables.getOrganizationsTable(), (err, result) => {
+            request.bulk(Tables.getOrganizationsTable(), (err) => {
                 sql.close();
                 if (err) {
                     console.log(err)
@@ -136,15 +136,15 @@ io.on('connection', socket => {
 
     socket.on("addNewUser", (userInfo) => {
         makeSureDatabaseExits();
-        if (!userInfo) {
-            console.log("user info not found in the request.");
+        if (!userInfo || !userInfo.organizationId) {
+            console.log("user info or organizationId not found in the request.");
+            notifyClient("operationFailed")
             return;
         }
         let table = Tables.getUserInfoTable();
-        const dob = new Date(userInfo.dateOfBirth);
-        table.rows.add(`${uniqueId()}`, `${userInfo.fullName}`, `${userInfo.userName}`, `${userInfo.password}`, `${userInfo.emailAddress}`, userInfo.mobileNumber, dob, userInfo.isAdmin);
+        table.rows.add(`${userInfo.organizationId}`, `${uniqueId()}`, `${userInfo.fullName}`, `${userInfo.password}`, `${userInfo.emailAddress}`, userInfo.mobileNumber, userInfo.isAdmin);
         connectSql().then((request) => {
-            request.bulk(table, (err, result) => {
+            request.bulk(table, (err) => {
                 sql.close();
                 if (err)
                     notifyClient("operationFailed", { message: "Unable to add user" });
@@ -160,7 +160,7 @@ io.on('connection', socket => {
             table.rows.add(`${uniqueId()}`, department);
         });
         connectSql().then((request) => {
-            request.bulk(table, (err, result) => {
+            request.bulk(table, (err) => {
                 sql.close();
                 if (err) {
                     console.log(err)
@@ -185,7 +185,7 @@ io.on('connection', socket => {
             table.rows.add(`${uniqueId()}`, data.questions[i], data.options[i], data.department, data.correctOptions[i]);
         }
         connectSql().then((request) => {
-            request.bulk(table, (err, result) => {
+            request.bulk(table, (err) => {
                 sql.close();
                 if (err) {
                     console.log(err)

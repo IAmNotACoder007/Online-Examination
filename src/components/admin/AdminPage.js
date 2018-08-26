@@ -22,15 +22,15 @@ class AdminPage extends Component {
         const { value } = this.state;
         switch (value) {
             case 0:
-                return <Departments />
+                return <Departments organizationId={this.props.organizationId}/>
             case 1:
-                return <AddQuestions />
+                return <AddQuestions organizationId={this.props.organizationId}/>
             case 2:
-                return <UpdateQuestionOptions />
+                return <UpdateQuestionOptions organizationId={this.props.organizationId}/>
             case 3:
                 return <TabContainer>Item four</TabContainer>
             case 4:
-                return <ManageAdmins />
+                return <ManageAdmins organizationId={this.props.organizationId}/>
             default:
                 return (
                     <div>Sorry, page not found</div>

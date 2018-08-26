@@ -6,24 +6,22 @@ import AdminPage from './components/admin/AdminPage';
 import ExamPage from './components/users/ExamPage';
 import SelectExam from './components/users/SelectExam';
 import cookie from 'react-cookies';
-import Departments from './components/admin/DepartmentPage';
 
 
 class Routes extends Component {
     currentComponent;
-    state = {
-        openDrawer: false
-    }
 
     isLoggedIn() {
         const userId = cookie.load('userId')
         return userId ? true : false;
     }
     renderComponent(componentName, props) {
+        const organizationId = cookie.load('organizationId');
+        const componentProps = { organizationId: organizationId, ...props }
         this.currentComponent = componentName;
         return (
             <div className="components-holder">
-                <this.currentComponent {...props} />
+                <this.currentComponent {...componentProps} />
             </div>
         )
     }

@@ -49,7 +49,7 @@ class ManageAdmins extends Component {
         return (
             <div className="manage-admins-page-holder">
                 <PaperSheet classes="manage-admins-page-paper" content={this.getContent()} />
-                <RegisterPage open={this.state.isDialogOpen} handleClose={this.handleClose} title="Add admin"/>
+                <RegisterPage isAdmin={true} open={this.state.isDialogOpen} organizationId={this.props.organizationId} handleClose={this.handleClose} title="Add admin" />
             </div>
         )
     }

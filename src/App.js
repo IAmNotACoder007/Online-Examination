@@ -6,13 +6,6 @@ import { subscribeToEvent } from './Api';
 import TopBar from './components/common/AppTopBar';
 
 class App extends Component {
-  state = {
-    openDrawer: false
-  }
-
-  toggleDrawer = (open) => {
-    this.setState({ openDrawer: open })
-  }
   render() {
     subscribeToEvent("operationFailed", (data) => {
       let message = undefined;
@@ -30,8 +23,8 @@ class App extends Component {
 
     return (
       <div className="App" style={{ display: 'flex', flexDirection: 'column' }}>
-        <TopBar onToggleDrawer={this.toggleDrawer} />
-        <Routes open={this.state.openDrawer} onToggleDrawer={this.toggleDrawer} />
+        <TopBar />
+        <Routes />
         <NotificationContainer />
       </div>
     );

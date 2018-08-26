@@ -50,14 +50,14 @@ class Login extends Component {
                     this.redirectTo = new URL(`${window.location.origin}/selectExam`);
                 }
             }
-            cookie.save('userId', userInfo.user_id);
+            this.updateCookies(userInfo.user_id, userInfo.organization_id);
             this.setState({ navigate: true });
         });
 
         subscribeToEvent("organizationLoginSuccessful", (data) => {
             const userInfo = JSON.parse(data)[0];
             this.redirectTo = new URL(`${window.location.origin}/admin`);
-            cookie.save('userId', userInfo.user_id);
+            this.updateCookies(userInfo.user_id, userInfo.organization_id);
             this.setState({ navigate: true });
         });
 
@@ -66,6 +66,10 @@ class Login extends Component {
             this.setState({ userNameError: true });
         });
 
+        this.updateCookies = (userId, organizationId) => {
+            cookie.save('userId', userId);
+            cookie.save('organizationId', organizationId);
+        }
 
         this.getLoginPaperContent = () => {
             const primaryTheme = {
