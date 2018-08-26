@@ -6,21 +6,24 @@ import AdminPage from './components/admin/AdminPage';
 import ExamPage from './components/users/ExamPage';
 import SelectExam from './components/users/SelectExam';
 import cookie from 'react-cookies';
-import TopBar from './components/common/AppTopBar'
+import Departments from './components/admin/DepartmentPage';
 
 
 class Routes extends Component {
     currentComponent;
+    state = {
+        openDrawer: false
+    }
+
     isLoggedIn() {
         const userId = cookie.load('userId')
         return userId ? true : false;
     }
-    renderComponent(componentName) {
+    renderComponent(componentName, props) {
         this.currentComponent = componentName;
         return (
             <div className="components-holder">
-                <TopBar />
-                <this.currentComponent />
+                <this.currentComponent {...props} />
             </div>
         )
     }
@@ -33,9 +36,9 @@ class Routes extends Component {
                     } />
                     <Route path='/login' render={() => this.renderComponent(Login)} />
                     <Route path='/register' render={() => this.renderComponent(Register)} />
-                    <Route path='/admin' render={() => {
+                    <Route path='/admin' render={(props) => {
                         if (this.isLoggedIn())
-                            return (this.renderComponent(AdminPage))
+                            return (this.renderComponent(AdminPage, { isOrganization: props.location.state.isOrganization }))
                         else {
                             return (<Redirect to={{
                                 pathname: '/login',

@@ -1,0 +1,22 @@
+.manage-admins-page-holder {
+    margin-top: 25px;
+    height: calc(100% - 50px);
+    display: flex;
+    justify-content: center;
+}
+
+.manage-admins-page-holder .paper-sheet>div {
+    height: 100%;
+    width: 100%;
+}
+
+.manage-admins-page-holder .paper-sheet {
+    height: 90%;
+    width: 50%;
+}
+
+.manage-admins-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}

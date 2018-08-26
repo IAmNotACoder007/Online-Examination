@@ -107,6 +107,33 @@ io.on('connection', socket => {
         });
     });
 
+    socket.on('doOrganizationLogin', (data) => {
+        console.log(`Got a Organization login request from user with data ${data.userId} and ${data.password}`);
+        makeSureDatabaseExits();
+        connectSql().then((request) => {
+            request.bulk(Tables.getOrganizationsTable(), (err, result) => {
+                sql.close();
+                if (err) {
+                    console.log(err)
+                    notifyClient("operationFailed");
+                } else {
+                    const selectQuery = `select* from organizations where organization_email='${data.userId}' and organization_password='${data.password}'`;
+                    executeQuery(selectQuery).then((record) => {
+                        if (record && record.length > 0)
+                            notifyClient("organizationLoginSuccessful", record);
+                        else
+                            notifyClient("userNotRegister", record);
+                    }).catch((err) => {
+                        notifyClient("operationFailed");
+                        console.log(err)
+                    });
+
+                }
+            });
+        });
+    });
+
+
     socket.on("addNewUser", (userInfo) => {
         makeSureDatabaseExits();
         if (!userInfo) {
@@ -269,6 +296,8 @@ const verifyOrganizationExists = (email) => {
             def.reject(data);
         else
             def.resolve()
+    }).catch(() => {
+        def.resolve()
     })
     return def
 }

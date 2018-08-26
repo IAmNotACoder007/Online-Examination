@@ -11,7 +11,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { withStyles } from '@material-ui/core/styles';
 import OrganizationRegistration from '../organization/OrganizationRegistrationPage';
-
+import MenuIcon from '@material-ui/icons/Menu';
 
 class TopBar extends Component {
     constructor(props) {
@@ -27,13 +27,14 @@ class TopBar extends Component {
         this.setState({ anchorEl: event.currentTarget });
     };
 
+
     handleClose = () => {
         this.setState({ anchorEl: null });
     };
 
-    handleOrgRegistrationClose=()=>{
-        this.setState({showOrganizationRegistrationDlg:false})
-    }
+    handleOrgRegistrationClose = () => {
+        this.setState({ showOrganizationRegistrationDlg: false })
+    }    
 
     getTopBarRightSideContent = () => {
         const { anchorEl } = this.state;
@@ -103,7 +104,7 @@ class TopBar extends Component {
                 <MuiThemeProvider theme={theme}>
                     <div>
                         <AppBar position="static">
-                            <Toolbar variant="dense" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Toolbar variant="dense" style={{ display: 'flex', justifyContent: 'space-between' }}>                              
                                 <Typography style={{ flex: '1', textAlign: 'left' }} variant="title" color="inherit">
                                     Online Exam
                                 </Typography>
@@ -111,7 +112,7 @@ class TopBar extends Component {
                             </Toolbar>
                         </AppBar>
                     </div>
-                    <OrganizationRegistration open={this.state.showOrganizationRegistrationDlg} closeHandler={this.handleOrgRegistrationClose}/>
+                    <OrganizationRegistration open={this.state.showOrganizationRegistrationDlg} closeHandler={this.handleOrgRegistrationClose} />
                 </MuiThemeProvider>
             </div>
         )

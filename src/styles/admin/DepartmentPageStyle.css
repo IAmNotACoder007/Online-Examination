@@ -12,7 +12,7 @@
 }
 
 .department-container .paper-sheet {
-    height: 85%;
+    height: 90%;
     width: 50%;
 }
 
@@ -21,16 +21,6 @@
     width: 100%;
 }
 
-.no-data-found {
-    font-size: 20px;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
-    color: rgba(0, 0, 0, 0.54);
-}
 
 .department {
     display: flex;

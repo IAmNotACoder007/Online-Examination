@@ -8,6 +8,7 @@ import AddQuestions from './AddQuestionsPage';
 import Departments from './DepartmentPage';
 import '../../styles/admin/AdminPage.css'
 import UpdateQuestionOptions from './UpdateQuestionsOptions';
+import ManageAdmins from '../organization/ManageAdminsPage'
 
 
 class AdminPage extends Component {
@@ -28,12 +29,19 @@ class AdminPage extends Component {
                 return <UpdateQuestionOptions />
             case 3:
                 return <TabContainer>Item four</TabContainer>
+            case 4:
+                return <ManageAdmins />
             default:
                 return (
                     <div>Sorry, page not found</div>
                 )
         }
 
+    }
+
+    getTabsWithOrganizationsPermission = () => {
+        if (this.props.isOrganization)
+            return (<Tab label="Manage Admins" />)
     }
     render() {
         const theme = createMuiTheme({
@@ -49,7 +57,7 @@ class AdminPage extends Component {
         });
         return (
             <content className="admin-page-main-container">
-                <div style={{ padding: "25px",width:'870px' }}>
+                <div style={{ padding: "25px" }}>
                     <MuiThemeProvider theme={theme}>
                         <Paper>
                             <Tabs
@@ -63,6 +71,7 @@ class AdminPage extends Component {
                                 <Tab label="Add Questions/Options" />
                                 <Tab label="Edit/Delete Questions/Options" />
                                 <Tab label="Setting" />
+                                {this.getTabsWithOrganizationsPermission()}
                             </Tabs>
                         </Paper>
                         {this.renderTabContent()}

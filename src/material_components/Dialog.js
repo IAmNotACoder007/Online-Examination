@@ -15,6 +15,7 @@ class MaterialDialog extends Component {
     render() {
         let dialogProps = {
             open: this.props.isOpen,
+            style:{...this.props.styles},
             onClose: this.props.onDialogClose,
             fullScreen:this.props.fullScreen,
             'aria-labelledby': "responsive-dialog-title",
@@ -45,7 +46,8 @@ MaterialDialog.propTypes = {
     onDialogClose: PropTypes.func,
     styleClass: PropTypes.string,
     isAlertDialog: PropTypes.bool,
-    fullScreen:PropTypes.bool
+    fullScreen:PropTypes.bool,
+    styles:PropTypes.object
 }
 
 MaterialDialog.defaultProps = {
@@ -54,7 +56,8 @@ MaterialDialog.defaultProps = {
     onDialogClose: () => { },
     styleClass: '',
     isAlertDialog: false,
-    fullScreen:false
+    fullScreen:false,
+    styles:{}
 }
 
 export default MaterialDialog;

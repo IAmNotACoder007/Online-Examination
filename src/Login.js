@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { subscribeToEvent, emitEvent } from './Api.js';
 import cookie from 'react-cookies';
 import { Redirect } from 'react-router-dom';
+import CheckBox from './material_components/MaterialCheckBox'
 
 class Login extends Component {
     constructor(props) {
@@ -18,14 +19,22 @@ class Login extends Component {
             passwordError: false,
             userName: "",
             password: "",
-            navigate: false
+            navigate: false,
+            isOrganizationLogin: true
         }
         this.redirectTo = "";
         this.userNameErrorMessage = "Username must be specified";
         this.passwordErrorMessage = "Password must be specified";
         this.doLogin = () => {
             this.validateFields();
-            emitEvent("doLogin", { userId: this.state.userName, password: this.state.password });
+            if (this.state.isOrganizationLogin)
+                emitEvent("doOrganizationLogin", { userId: this.state.userName, password: this.state.password });
+            else
+                emitEvent("doLogin", { userId: this.state.userName, password: this.state.password });
+        }
+
+        this.isOrganizationLogin = (name, isOrganizationLogin) => {
+            this.setState({ isOrganizationLogin: isOrganizationLogin })
         }
 
         subscribeToEvent("loginSuccessful", (data) => {
@@ -45,10 +54,18 @@ class Login extends Component {
             this.setState({ navigate: true });
         });
 
+        subscribeToEvent("organizationLoginSuccessful", (data) => {
+            const userInfo = JSON.parse(data)[0];
+            this.redirectTo = new URL(`${window.location.origin}/admin`);
+            cookie.save('userId', userInfo.user_id);
+            this.setState({ navigate: true });
+        });
+
         subscribeToEvent("userNotRegister", () => {
             this.userNameErrorMessage = "Username or password is incorrect";
             this.setState({ userNameError: true });
         });
+
 
         this.getLoginPaperContent = () => {
             const primaryTheme = {
@@ -66,6 +83,7 @@ class Login extends Component {
                     <main className="login-page-paper-content">
                         <TextBox fieldName="userName" errorMessage={this.userNameErrorMessage} inputAdornment={<AccountCircle />} primaryTheme={primaryTheme} error={this.state.userNameError} required={true} id="userName" placeholder="Username" onChange={this.handleChange} />
                         <TextBox fieldName="password" errorMessage={this.passwordErrorMessage} inputAdornment={<PasswordIcon />} primaryTheme={primaryTheme} error={this.state.passwordError} required={true} id="password" type="password" placeholder="Password" onChange={this.handleChange} />
+                        <CheckBox onChange={this.isOrganizationLogin} checked={this.state.isOrganizationLogin} label="Organization Login"></CheckBox>
                         <ActionButton primaryButtonTheme={primaryTheme} color="primary" onClick={this.doLogin} text="Login" />
                         <a className="forgot-password-link">Forgot Password?</a>
                     </main>
@@ -103,7 +121,8 @@ class Login extends Component {
         if (this.state.navigate) {
             return <Redirect to={{
                 pathname: this.redirectTo.pathname,
-                search: this.redirectTo.search
+                search: this.redirectTo.search,
+                state: { isOrganization: this.state.isOrganizationLogin }
             }} push={true} />
         }
         return (
