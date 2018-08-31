@@ -10,8 +10,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { withStyles } from '@material-ui/core/styles';
-import OrganizationRegistration from '../organization/OrganizationRegistrationPage';
-import MenuIcon from '@material-ui/icons/Menu';
+import RegistrationPage from '../../components/RegisterPage';
 
 class TopBar extends Component {
     constructor(props) {
@@ -19,7 +18,8 @@ class TopBar extends Component {
     }
     state = {
         loggedIn: false,
-        showOrganizationRegistrationDlg: false
+        showOrganizationRegistrationDlg: false,
+        organizationAlreadyRegistered:false
     }
     isAdmin = false;
 
@@ -34,7 +34,7 @@ class TopBar extends Component {
 
     handleOrgRegistrationClose = () => {
         this.setState({ showOrganizationRegistrationDlg: false })
-    }    
+    }
 
     getTopBarRightSideContent = () => {
         const { anchorEl } = this.state;
@@ -77,6 +77,32 @@ class TopBar extends Component {
 
         }
     }
+
+    registerOrganization = (data) => {
+        if (!data || Object.keys(data).length === 0) return;
+        fetch('http://127.0.0.1:8080/registerOrganization/', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: data.fullName,
+                email: data.emailAddress,
+                phone: data.mobileNumber,
+                password: data.password
+            })
+        }).then((response) => {
+            return response.json();
+        }).then((data) => {
+            if (data.isAlreadyExists) {
+                this.setState({ organizationAlreadyRegistered: true });
+            } else {
+                this.handleOrgRegistrationClose();
+            }
+        });
+    }
+
     render() {
         subscribeToEvent("loginSuccessful", (data) => {
             const userInfo = JSON.parse(data)[0];
@@ -104,7 +130,7 @@ class TopBar extends Component {
                 <MuiThemeProvider theme={theme}>
                     <div>
                         <AppBar position="static">
-                            <Toolbar variant="dense" style={{ display: 'flex', justifyContent: 'space-between' }}>                              
+                            <Toolbar variant="dense" style={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <Typography style={{ flex: '1', textAlign: 'left' }} variant="title" color="inherit">
                                     Online Exam
                                 </Typography>
@@ -112,7 +138,7 @@ class TopBar extends Component {
                             </Toolbar>
                         </AppBar>
                     </div>
-                    <OrganizationRegistration open={this.state.showOrganizationRegistrationDlg} closeHandler={this.handleOrgRegistrationClose} />
+                    <RegistrationPage isalreadyRegister={this.state.organizationAlreadyRegistered} register={this.registerOrganization} open={this.state.showOrganizationRegistrationDlg} handleClose={this.handleOrgRegistrationClose} title="Register Organization" />
                 </MuiThemeProvider>
             </div>
         )

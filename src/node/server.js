@@ -91,7 +91,7 @@ io.on('connection', socket => {
                     console.log(err)
                     notifyClient("operationFailed");
                 } else {
-                    const selectQuery = `select* from user_info where user_name='${data.userId}' and password='${data.password}'`;
+                    const selectQuery = `select* from user_info where email_address='${data.userName}' and password='${data.password}'`;
                     executeQuery(selectQuery).then((record) => {
                         if (record && record.length > 0)
                             notifyClient("loginSuccessful", record);
@@ -141,17 +141,21 @@ io.on('connection', socket => {
             notifyClient("operationFailed")
             return;
         }
-        let table = Tables.getUserInfoTable();
-        table.rows.add(`${userInfo.organizationId}`, `${uniqueId()}`, `${userInfo.fullName}`, `${userInfo.password}`, `${userInfo.emailAddress}`, userInfo.mobileNumber, userInfo.isAdmin);
-        connectSql().then((request) => {
-            request.bulk(table, (err) => {
-                sql.close();
-                if (err)
-                    notifyClient("operationFailed", { message: "Unable to add user" });
-                else
-                    notifyClient("operationSuccessful", { message: "User added successfully" });
+        isUserAlreadyExists(userInfo.emailAddress).then(() => {
+            let table = Tables.getUserInfoTable();
+            table.rows.add(`${userInfo.organizationId}`, `${uniqueId()}`, `${userInfo.fullName}`, `${userInfo.password}`, `${userInfo.emailAddress}`, userInfo.mobileNumber, userInfo.isAdmin);
+            connectSql().then((request) => {
+                request.bulk(table, (err) => {
+                    sql.close();
+                    if (err)
+                        notifyClient("operationFailed", { message: "Unable to add user" });
+                    else
+                        notifyClient("operationSuccessful", { message: "User added successfully" });
+                })
             })
-        })
+        }).catch(() => {
+            notifyClient("userAlreadyExist");
+        });
     });
 
     socket.on("addNewDepartments", (data) => {
@@ -291,6 +295,20 @@ const notifyClient = (eventName, data) => {
 const verifyOrganizationExists = (email) => {
     const def = new Deferred();
     const selectQuery = `select * from organizations where organization_email='${email}'`;
+    executeQuery(selectQuery).then((data) => {
+        if (data && data.length)
+            def.reject(data);
+        else
+            def.resolve()
+    }).catch(() => {
+        def.resolve()
+    })
+    return def
+}
+
+const isUserAlreadyExists = (email) => {
+    const def = new Deferred();
+    const selectQuery = `select * from user_info where email_address='${email}'`;
     executeQuery(selectQuery).then((data) => {
         if (data && data.length)
             def.reject(data);

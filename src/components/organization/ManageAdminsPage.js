@@ -5,10 +5,12 @@ import AddIcon from '@material-ui/icons/Add';
 import PaperSheet from '../../material_components/PaperSheet';
 import '../../styles/organization/ManageAdminsStyle.css';
 import RegisterPage from '../RegisterPage'
+import { subscribeToEvent, emitEvent } from '../../Api.js';
 
 class ManageAdmins extends Component {
     state = {
-        isDialogOpen: false
+        isDialogOpen: false,
+        isAdminAlreadyExist: false
     }
 
     getContent = () => {
@@ -44,12 +46,25 @@ class ManageAdmins extends Component {
         )
     }
 
+    registerAdmin = (data) => {
+        if (!data || Object.keys(data) === null) return;
+        const adminInfo = { isAdmin: true, organizationId: this.props.organizationId, ...data };
+        emitEvent("addNewUser", adminInfo)
+    }
+
 
     render() {
+        subscribeToEvent("userAlreadyExist", () => {
+            this.setState({ isAdminAlreadyExist: true })
+        })
+
+        subscribeToEvent("operationSuccessful", () => {
+            this.setState({ isDialogOpen: false })
+        })
         return (
             <div className="manage-admins-page-holder">
                 <PaperSheet classes="manage-admins-page-paper" content={this.getContent()} />
-                <RegisterPage isAdmin={true} open={this.state.isDialogOpen} organizationId={this.props.organizationId} handleClose={this.handleClose} title="Add admin" />
+                <RegisterPage register={this.registerAdmin} isalreadyRegister={this.state.isAdminAlreadyExist} open={this.state.isDialogOpen} handleClose={this.handleClose} title="Add admin" />
             </div>
         )
     }

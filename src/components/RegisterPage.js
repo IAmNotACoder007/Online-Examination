@@ -17,8 +17,7 @@ class Register extends Component {
     constructor(props) {
         super(props);
         this.passwordErrorMessage = "Password must be specified";
-        this.fullNameErrorMessage = "Full name must be specified";
-        this.emailErrorMessage = "Email address must be specified";
+        this.fullNameErrorMessage = "Full name must be specified";        
         this.mobileErrorMessage = "Mobile number must be specified";
 
         this.initialState = {
@@ -44,17 +43,19 @@ class Register extends Component {
         }
 
         this.closeDialog = () => {
+            this.setState({ ...this.initialState });
             this.props.handleClose();
         }
 
         this.registerUser = () => {
             if (this.isValidForm()) {
-                emitEvent("addNewUser", {
-                    organizationId: this.props.organizationId,
-                    fullName: this.state.fullName, password: this.state.password,
-                    emailAddress: this.state.emailAddress, mobileNumber: this.state.mobileNumber, isAdmin: this.props.isAdmin
-                });
-                this.closeDialog();
+                if (this.props.register) {
+                    const data = {
+                        fullName: this.state.fullName, password: this.state.password,
+                        emailAddress: this.state.emailAddress, mobileNumber: this.state.mobileNumber
+                    }
+                    this.props.register(data)
+                }
             }
         }
 
@@ -73,7 +74,7 @@ class Register extends Component {
                 <div className="register-page-paper-content" style={{ display: 'flex', flexDirection: 'column' }}>
                     <TextBox errorMessage={this.fullNameErrorMessage} error={this.state.fullNameError} required={true} id="fullName" fieldName="fullName" placeholder="Full name" label="Full name" onChange={this.handleChange} />
                     <TextBox errorMessage={this.passwordErrorMessage} error={this.state.passwordError} required={true} id="password" fieldName="password" type="password" label="Password" placeholder="Password" onChange={this.handleChange} />
-                    <TextBox errorMessage={this.emailErrorMessage} error={this.state.emailAddressError} required={true} id="emailAddress" fieldName="emailAddress" type="email" label="Email address" placeholder="Email address" onChange={this.handleChange} />
+                    <TextBox errorMessage={this.emailErrorMessage} error={this.props.isalreadyRegister || this.state.emailAddressError} required={true} id="emailAddress" fieldName="emailAddress" type="email" label="Email address" placeholder="Email address" onChange={this.handleChange} />
                     <TextBox errorMessage={this.mobileErrorMessage} error={this.state.mobileNumberError} required={true} id="mobileNumber" fieldName="mobileNumber" type="number" label="Mobile number" placeholder="Mobile number" onChange={this.handleChange} />
                 </div>
 
@@ -85,6 +86,7 @@ class Register extends Component {
 
     }
     render() {
+        this.emailErrorMessage = this.props.isalreadyRegister ? "Email address already registered" : "Email address must be specified";
         return (
             <div className="register-container" >
                 <MaterialDialog dialogTitle={this.props.title} styleClass="register-dialog" dialogContent={this.getDialogContent()} dialogButtons={this.getDialogButtons()} isOpen={this.props.open} />
@@ -97,12 +99,13 @@ export default Register;
 
 Register.propTypes = {
     open: PropTypes.bool.isRequired,
+    register: PropTypes.func.isRequired,
     handleClose: PropTypes.func.isRequired,
-    isAdmin: PropTypes.bool.isRequired,
-    title: PropTypes.string
+    title: PropTypes.string,
+    isalreadyRegister: PropTypes.bool
 }
 Register.defaultProps = {
     open: false,
     title: '',
-    isAdmin: false
+    isalreadyRegister: false
 }

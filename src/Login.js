@@ -30,7 +30,7 @@ class Login extends Component {
             if (this.state.isOrganizationLogin)
                 emitEvent("doOrganizationLogin", { userId: this.state.userName, password: this.state.password });
             else
-                emitEvent("doLogin", { userId: this.state.userName, password: this.state.password });
+                emitEvent("doLogin", { email: this.state.userName, password: this.state.password });
         }
 
         this.isOrganizationLogin = (name, isOrganizationLogin) => {
