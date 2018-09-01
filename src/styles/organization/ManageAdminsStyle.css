@@ -20,3 +20,19 @@
     flex-direction: column;
     height: 100%;
 }
+
+.admin-info {
+    display: flex;
+    justify-content: space-between;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;    
+    margin-left: 10px;
+    margin-right: 10px;
+    font-size: 15px;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    height: 52px;
+}
+
+.actions-holder {
+    display: flex;
+}

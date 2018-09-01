@@ -46,6 +46,18 @@ app.get('/getQuestionsOptionsForDepartments', (req, res) => {
     });
 });
 
+app.get('/getAdminsForOrganization', (req, res) => {
+    const organizationId = req.query.organizationId;
+    if (!organizationId) res.send(JSON.stringify({}));
+    const query = `select* from user_info where organization_id='${organizationId}' and is_admin=0`;
+    executeQuery(query).then((record) => {
+        res.send(JSON.stringify(record));
+    }).catch(() => {
+        res.send(JSON.stringify({}));
+    });
+});
+
+
 app.post('/registerOrganization', jsonParser, (req, res) => {
     makeSureDatabaseExits();
     if (!req.body) {
