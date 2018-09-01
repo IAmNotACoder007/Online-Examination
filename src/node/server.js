@@ -159,10 +159,14 @@ io.on('connection', socket => {
             connectSql().then((request) => {
                 request.bulk(table, (err) => {
                     sql.close();
-                    if (err)
+                    if (err) {
                         notifyClient("operationFailed", { message: "Unable to add user" });
-                    else
+                    }
+                    else {
                         notifyClient("operationSuccessful", { message: "User added successfully" });
+                        if (userInfo.isAdmin)
+                            sendAdminUpdationEventToClient(userInfo.organizationId);
+                    }
                 })
             })
         }).catch(() => {
@@ -198,7 +202,7 @@ io.on('connection', socket => {
     socket.on("addQuestionAndOptions", (data) => {
         let table = Tables.getQuestionsOptionsTable();
         for (let i = 0; i < data.questions.length; i++) {
-            table.rows.add(`${uniqueId()}`, data.questions[i], data.options[i], data.department, data.correctOptions[i]);
+            table.rows.add(`${data.organizationId}`,`${uniqueId()}`, data.questions[i], data.options[i], data.department, data.correctOptions[i]);
         }
         connectSql().then((request) => {
             request.bulk(table, (err) => {
@@ -297,11 +301,54 @@ io.on('connection', socket => {
         }
     })
 
+    socket.on("updateAdminInfos", (data) => {
+        if (!data.userId) {
+            console.log("admin_id not found in data");
+            notifyClient("operationFailed");
+        } else {
+            const updateQuery = `update user_info set full_name='${data.name}',email_address='${data.email}',phone=${data.phone},is_suspended=${data.isSuspended} where user_id='${data.userId}'`;
+            executeQuery(updateQuery).then(() => {
+                notifyClient("operationSuccessful", { message: "Admin info updated successfully" });
+                sendAdminUpdationEventToClient(data.organizationId);
+            }).catch((err) => {
+                notifyClient("operationFailed");
+                console.log(err)
+            });
+        }
+    })
+
+    socket.on("deleteAdmin", (data) => {
+        if (!data.userId) {
+            console.log("admin_id not found in data");
+            notifyClient("operationFailed");
+        } else {
+            const updateQuery = `delete from user_info where user_id='${data.userId}'`;
+            executeQuery(updateQuery).then(() => {
+                notifyClient("operationSuccessful", { message: "Admin deleted successfully" });
+                sendAdminUpdationEventToClient(data.organizationId);
+            }).catch((err) => {
+                notifyClient("operationFailed");
+                console.log(err)
+            });
+        }
+    })
+
 });
 
 const notifyClient = (eventName, data) => {
     if (webSocket)
         webSocket.emit(eventName, JSON.stringify(data));
+}
+
+const sendAdminUpdationEventToClient = (organizationId) => {
+    if (organizationId) {
+        const query = `select* from user_info where organization_id='${organizationId}' and is_admin=0`;
+        executeQuery(query).then((record) => {
+            notifyClient("updateAdminInfo", record);
+        });
+    } else {
+        console.log("oreganizationId is not found in the data");
+    }
 }
 
 const verifyOrganizationExists = (email) => {

@@ -13,6 +13,18 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 
 class ManageAdmins extends Component {
+    constructor(props) {
+        super(props)
+
+        subscribeToEvent("userAlreadyExist", () => {
+            this.setState({ isAdminAlreadyExist: true })
+        });
+
+        subscribeToEvent("updateAdminInfo", (data) => {
+            this.adminsList = JSON.parse(data);
+            this.setState({ refereshAdminsList: true, isDialogOpen: false });
+        });
+    }
     defaultState = {
         isDialogOpen: false,
         isAdminAlreadyExist: false,
@@ -39,10 +51,10 @@ class ManageAdmins extends Component {
     getContent = () => {
         return (
             <div className="manage-admins-content">
-                <main>
+                <main style={{ overflow: "auto" }}>
                     {this.getMainContent()}
                 </main>
-                <footer>
+                <footer style={{ height: '75px' }}>
                     <div className="add-button">
                         <Tooltip title="Add New Admin">
                             <Button onClick={this.openAddAdminDialog} variant="fab" color="primary" aria-label="add">
@@ -77,12 +89,22 @@ class ManageAdmins extends Component {
         }
     }
 
-    saveAdminInfo = (userId) => {
+    saveAdminInfo = (userInfo) => {
+        const infos = {
+            userId: userInfo.user_id,
+            name: this.state.fullName || userInfo.full_name,
+            email: this.state.email || userInfo.email_address,
+            phone: this.state.phone || userInfo.phone,
+            isSuspended: Number(this.state.isSuspended === undefined ? userInfo.is_suspended : this.state.isSuspended),
+            organizationId: this.props.organizationId
+        }
+        emitEvent("updateAdminInfos", infos);
 
     }
 
-    deleteAdmin = () => {
-
+    deleteAdmin = (userId) => {
+        const data = { userId: userId, organizationId: this.props.organizationId }
+        emitEvent("deleteAdmin", data);
     }
 
     updateSuspention = name => event => {
@@ -129,8 +151,8 @@ class ManageAdmins extends Component {
                     <text>{info.email_address}</text>
                     <text>{info.phone}</text>
                     <div className="actions-holder">
-                        <EditAction disableSaveButton={!this.isValidForm()} onSave={() => { return (this.saveAdminInfo(info.user_id)) }} contentSource={() => { return (this.getEditAdminContent(info)) }}></EditAction>
-                        <DeleteAction onDelete={this.deleteAdmin}></DeleteAction>
+                        <EditAction disableSaveButton={!this.isValidForm()} onSave={() => { return (this.saveAdminInfo(info)) }} contentSource={() => { return (this.getEditAdminContent(info)) }}></EditAction>
+                        <DeleteAction onDelete={() => { this.deleteAdmin(info.user_id) }}></DeleteAction>
                     </div>
                 </div>
             )
@@ -146,13 +168,7 @@ class ManageAdmins extends Component {
 
 
     render() {
-        subscribeToEvent("userAlreadyExist", () => {
-            this.setState({ isAdminAlreadyExist: true })
-        })
 
-        subscribeToEvent("operationSuccessful", () => {
-            this.setState({ isDialogOpen: false })
-        })
         return (
             <div className="manage-admins-page-holder">
                 <PaperSheet classes="manage-admins-page-paper" content={this.getContent()} />

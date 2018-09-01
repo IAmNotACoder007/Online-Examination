@@ -232,7 +232,7 @@ class AddQuestions extends Component {
         }
 
         this.updateQuestionOptions = () => {
-            const data = { questions: this.questions, options: this.options,correctOptions:this.correctOptions, department: (this.selectedDepartment || this.state.departments[0]) }
+            const data = { organizationId: this.props.organizationId, questions: this.questions, options: this.options, correctOptions: this.correctOptions, department: (this.selectedDepartment || this.state.departments[0]) }
             emitEvent("addQuestionAndOptions", data);
             this.setState({ showPreview: false });
             subscribeToEvent("questionsAddedSuccessfully", () => {

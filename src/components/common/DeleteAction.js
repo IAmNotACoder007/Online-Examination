@@ -14,7 +14,7 @@ class DeleteAction extends Component {
     }
     getDialogContent = () => {
         return (
-            <div className="confirmation-dialog">                
+            <div className="confirmation-dialog">
                 <text>{this.props.message}</text>
             </div>
         )
@@ -23,11 +23,18 @@ class DeleteAction extends Component {
     getDialogButtons = () => {
         return (
             <div className="delete-dialog-buttons">
-                <ActionButton text="Delete" flatButton={true} onClick={this.props.onDelete} />
+                <ActionButton text="Delete" flatButton={true} onClick={this.handleDelete} />
                 <ActionButton text="Cancel" flatButton={true} onClick={this.onclose} />
             </div>
         )
     }
+
+    handleDelete = () => {
+        if (this.props.onDelete)
+            this.props.onDelete();
+        this.onclose()
+    }
+
     onclose = () => {
         this.setState({ openDialog: false })
         if (this.props.onclose)
