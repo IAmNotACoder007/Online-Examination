@@ -108,7 +108,7 @@ class Department extends Component {
                 let departmentsName = document.getElementById("departmentName").value.trim();
                 departmentsName = departmentsName ? departmentsName.split(/\n/) : undefined;
                 if (this.hasValidMembers(departmentsName)) {
-                    emitEvent("addNewDepartments", { departments: departmentsName });
+                    emitEvent("addNewDepartments", { departments: departmentsName, organizationId: this.props.organizationId });
                     subscribeToEvent("newDepartmentsAdded", (departments) => {
                         this.updateDepartments(JSON.parse(departments));
                         this.setState({ isDialogOpen: false });

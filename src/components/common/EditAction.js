@@ -15,7 +15,7 @@ class EditAction extends Component {
             return (
                 <div className="edit-dialog-buttons" style={{ display: 'flex' }}>
                     {this.getExtraButtons()}
-                    <ActionButton text="Save" flatButton={true} onClick={this.onSave} />
+                    <ActionButton disabled={this.props.disableSaveButton} text="Save" flatButton={true} onClick={this.onSave} />
                     <ActionButton text="Cancel" flatButton={true} onClick={this.closeDialog} />
                 </div>
             )
@@ -63,7 +63,7 @@ class EditAction extends Component {
                 <IconButton onClick={this.editIconClickHandler}>
                     <EditIcon />
                 </IconButton>
-                <MaterialDialog dialogTitle={this.props.dialogTitle} styleClass={this.props.dialogClass} isOpen={this.state.openDialog} dialogContent={this.getDialogContent()} dialogButtons={this.getDialogButtons()} />
+                <MaterialDialog dialogTitle={this.props.dialogTitle} styleClass={`${this.props.dialogClass} edit-action-dialog`} isOpen={this.state.openDialog} dialogContent={this.getDialogContent()} dialogButtons={this.getDialogButtons()} />
             </div>
         )
     }
@@ -76,7 +76,8 @@ EditAction.propTypes = {
     dialogTitle: PropTypes.string,
     dialogClass: PropTypes.string,
     extraButtons: PropTypes.array,
-    onOpen: PropTypes.func
+    onOpen: PropTypes.func,
+    disableSaveButton: PropTypes.bool
 }
 
 EditAction.defaultProps = {
@@ -84,7 +85,8 @@ EditAction.defaultProps = {
     dialogTitle: "Edit",
     dialogClass: "",
     extraButtons: undefined,
-    onOpen: undefined
+    onOpen: undefined,
+    disableSaveButton: false
 }
 
 export default EditAction;

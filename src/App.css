@@ -78,3 +78,12 @@ html, body, #root, .App {
 .register-dialog {
   width: 350px
 }
+
+.edit-action-dialog {
+  min-width: 350px;
+}
+
+button:disabled {
+  cursor: not-allowed !important;
+  pointer-events: auto !important;
+}

@@ -155,7 +155,7 @@ io.on('connection', socket => {
         }
         isUserAlreadyExists(userInfo.emailAddress).then(() => {
             let table = Tables.getUserInfoTable();
-            table.rows.add(`${userInfo.organizationId}`, `${uniqueId()}`, `${userInfo.fullName}`, `${userInfo.password}`, `${userInfo.emailAddress}`, userInfo.mobileNumber, userInfo.isAdmin);
+            table.rows.add(`${userInfo.organizationId}`, `${uniqueId()}`, `${userInfo.fullName}`, `${userInfo.password}`, `${userInfo.emailAddress}`, userInfo.mobileNumber, userInfo.isAdmin, false);
             connectSql().then((request) => {
                 request.bulk(table, (err) => {
                     sql.close();
@@ -173,7 +173,7 @@ io.on('connection', socket => {
     socket.on("addNewDepartments", (data) => {
         let table = Tables.getDepartmentsTable();
         data.departments.forEach(department => {
-            table.rows.add(`${uniqueId()}`, department);
+            table.rows.add(`${data.organizationId}`, `${uniqueId()}`, department);
         });
         connectSql().then((request) => {
             request.bulk(table, (err) => {

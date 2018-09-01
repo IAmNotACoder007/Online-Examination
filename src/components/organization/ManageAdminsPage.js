@@ -9,15 +9,32 @@ import { subscribeToEvent, emitEvent } from '../../Api.js';
 import EditAction from '../common/EditAction';
 import DeleteAction from '../common/DeleteAction';
 import TextBox from '../../material_components/TextBox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
 
 class ManageAdmins extends Component {
-    state = {
+    defaultState = {
         isDialogOpen: false,
         isAdminAlreadyExist: false,
-        refereshAdminsList: false
+        refereshAdminsList: false,
+        fullNameError: false,
+        emailError: false,
+        phoneError: false,
+        fullName: '',
+        email: '',
+        phone: '',
+        isSuspended: undefined
     }
 
+    state = { ...this.defaultState }
+
     adminsList = [];
+    fullNameErrorMsg = "Name must be specified";
+    emailErrorMsg = "Email must be specified";
+    phoneErrorMsg = "Phone must be specified";
+    editedName = "";
+    editedEmail = "";
+    editedPhone = "";
 
     getContent = () => {
         return (
@@ -60,7 +77,7 @@ class ManageAdmins extends Component {
         }
     }
 
-    saveAdminInfo = () => {
+    saveAdminInfo = (userId) => {
 
     }
 
@@ -68,25 +85,51 @@ class ManageAdmins extends Component {
 
     }
 
+    updateSuspention = name => event => {
+        this.setState({ [name]: event.target.checked });
+    };
+
     getEditAdminContent = (adminInfo) => {
         return (
-            <div>
-                <TextBox id={adminInfo.user_id} fieldName="fullName" defaultValue={adminInfo.full_name}></TextBox>
-                <TextBox id={adminInfo.user_id} fieldName="email" defaultValue={adminInfo.email_address}></TextBox>
-                <TextBox id={adminInfo.user_id} fieldName="phone" defaultValue={adminInfo.phone} type="number"></TextBox>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <TextBox onChange={this.handleValueChange} errorMessage={this.fullNameErrorMsg} error={this.state.fullNameError} id={adminInfo.user_id} fieldName="fullName" defaultValue={adminInfo.full_name}></TextBox>
+                <TextBox onChange={this.handleValueChange} errorMessage={this.emailErrorMsg} error={this.state.emailError} id={adminInfo.user_id} fieldName="email" defaultValue={adminInfo.email_address}></TextBox>
+                <TextBox onChange={this.handleValueChange} errorMessage={this.phoneErrorMsg} error={this.state.phoneError} id={adminInfo.user_id} fieldName="phone" defaultValue={adminInfo.phone} type="number"></TextBox>
+                <FormControlLabel
+                    label="Suspended"
+                    control={
+                        <Switch
+                            checked={this.state.isSuspended === undefined ? adminInfo.is_suspended : this.state.isSuspended}
+                            onChange={this.updateSuspention('isSuspended')}
+                            value="isSuspended"
+                            color="primary"
+                        />
+                    }
+
+                />
             </div>
         )
     }
 
+    handleValueChange = (fieldName, val) => {
+        this.setState({ [fieldName]: val, [`${fieldName}Error`]: !val.trim() })
+    }
+
+    isValidForm = () => {
+        return (!this.state.fullNameError && !this.state.emailError && !this.state.phoneError)
+    }
+
     getAdminsList = () => {
         return (this.adminsList.map(info => {
+            const indicatorClass = info.is_suspended ? "suspended-admin" : "active-admin"
             return (
                 <div className="admin-info">
-                    <text>{info.full_name}</text>
+                    <span className={`admin-statue ${indicatorClass}`}></span>
+                    <text style={{ textTransform: 'capitalize' }}>{info.full_name}</text>
                     <text>{info.email_address}</text>
                     <text>{info.phone}</text>
                     <div className="actions-holder">
-                        <EditAction onSave={this.saveAdminInfo} contentSource={() => { return (this.getEditAdminContent(info)) }}></EditAction>
+                        <EditAction disableSaveButton={!this.isValidForm()} onSave={() => { return (this.saveAdminInfo(info.user_id)) }} contentSource={() => { return (this.getEditAdminContent(info)) }}></EditAction>
                         <DeleteAction onDelete={this.deleteAdmin}></DeleteAction>
                     </div>
                 </div>

@@ -36,3 +36,19 @@
 .actions-holder {
     display: flex;
 }
+
+.admin-statue{
+    background-color: rgba(204, 0, 102, 0);
+    
+    height: 10px;
+    width: 10px;
+    border-radius: 75px;
+}
+
+.suspended-admin{
+    border: 3px solid red;
+}
+
+.active-admin{
+    border: 3px solid #00a152;
+}

@@ -11,6 +11,7 @@ class Tables {
         userInfoTable.columns.add('email_address', sql.NVarChar(255), { nullable: false });
         userInfoTable.columns.add('phone', sql.Decimal(10, 0), { nullable: false });
         userInfoTable.columns.add('is_admin', sql.Int, { nullable: false });
+         userInfoTable.columns.add('is_suspended', sql.Int, { nullable: false });
         return userInfoTable
     }
 
