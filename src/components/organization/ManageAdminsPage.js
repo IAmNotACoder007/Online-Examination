@@ -161,7 +161,7 @@ class ManageAdmins extends Component {
 
     registerAdmin = (data) => {
         if (!data || Object.keys(data) === null) return;
-        const adminInfo = { isAdmin: true, organizationId: this.props.organizationId, ...data };
+        const adminInfo = { isAdmin:Number(true), organizationId: this.props.organizationId, ...data };
         emitEvent("addNewUser", adminInfo)
     }
 

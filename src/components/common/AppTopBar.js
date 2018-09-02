@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { subscribeToEvent } from '../../Api';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -11,17 +10,18 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { withStyles } from '@material-ui/core/styles';
 import RegistrationPage from '../../components/RegisterPage';
+import { Link } from 'react-router-dom';
+import '../../styles/AppTopbar.css'
 
 class TopBar extends Component {
     constructor(props) {
         super(props);
     }
     state = {
-        loggedIn: false,
         showOrganizationRegistrationDlg: false,
-        organizationAlreadyRegistered:false
+        organizationAlreadyRegistered: false,
     }
-    isAdmin = false;
+
 
     handleMenu = event => {
         this.setState({ anchorEl: event.currentTarget });
@@ -31,7 +31,7 @@ class TopBar extends Component {
     handleClose = () => {
         this.setState({ anchorEl: null });
     };
-
+   
     handleOrgRegistrationClose = () => {
         this.setState({ showOrganizationRegistrationDlg: false })
     }
@@ -39,11 +39,11 @@ class TopBar extends Component {
     getTopBarRightSideContent = () => {
         const { anchorEl } = this.state;
         const open = Boolean(anchorEl);
-        if (!this.state.loggedIn) {
+        if (this.props.isAdmin === undefined) {
             return (<Button color="inherit" onClick={() => { this.setState({ showOrganizationRegistrationDlg: true }) }}>Register Organization</Button>)
         }
         else {
-            if (this.isAdmin) {
+            if (this.props.isAdmin) {
                 return (
                     <div>
                         <IconButton
@@ -68,8 +68,8 @@ class TopBar extends Component {
                             open={open}
                             onClose={this.handleClose}
                         >
-                            <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                            <MenuItem onClick={this.handleClose}>My account</MenuItem>
+                            <MenuItem onClick={this.handleClose}>Chnage password</MenuItem>                            
+                            <div className="top-bar-link"><Link to="/logout">Logout</Link></div>
                         </Menu>
                     </div>
                 )
@@ -104,11 +104,6 @@ class TopBar extends Component {
     }
 
     render() {
-        subscribeToEvent("loginSuccessful", (data) => {
-            const userInfo = JSON.parse(data)[0];
-            this.isAdmin = userInfo.is_admin;
-            this.setState({ loggedIn: true });
-        });
         const theme = createMuiTheme({
             palette: {
                 primary: {

@@ -3,7 +3,7 @@ import './App.css';
 import Routes from './Routes'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import { subscribeToEvent } from './Api';
-import TopBar from './components/common/AppTopBar';
+
 
 class App extends Component {
   render() {
@@ -22,8 +22,7 @@ class App extends Component {
     });
 
     return (
-      <div className="App" style={{ display: 'flex', flexDirection: 'column' }}>
-        <TopBar />
+      <div className="App" style={{ display: 'flex', flexDirection: 'column' }}>        
         <Routes />
         <NotificationContainer />
       </div>

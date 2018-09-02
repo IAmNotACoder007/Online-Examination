@@ -1,0 +1,20 @@
+.top-bar-link {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    font-size: 16px;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    cursor: pointer;    
+} 
+.top-bar-link:hover{
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+.top-bar-link a{
+    border: none;
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.87);
+    padding-left: 16px;
+    padding-right: 16px;    
+}

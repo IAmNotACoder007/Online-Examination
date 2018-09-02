@@ -49,7 +49,7 @@ app.get('/getQuestionsOptionsForDepartments', (req, res) => {
 app.get('/getAdminsForOrganization', (req, res) => {
     const organizationId = req.query.organizationId;
     if (!organizationId) res.send(JSON.stringify({}));
-    const query = `select* from user_info where organization_id='${organizationId}' and is_admin=0`;
+    const query = `select* from user_info where organization_id='${organizationId}' and is_admin=1`;
     executeQuery(query).then((record) => {
         res.send(JSON.stringify(record));
     }).catch(() => {
@@ -94,7 +94,7 @@ io.on('connection', socket => {
     });
 
     socket.on('doLogin', (data) => {
-        console.log(`Got a login request from user with data ${data.userId} and ${data.password}`);
+        console.log(`Got a login request from user with data ${data.userName} and ${data.password}`);
         makeSureDatabaseExits();
         connectSql().then((request) => {
             request.bulk(Tables.getUserInfoTable(), (err) => {
@@ -342,7 +342,7 @@ const notifyClient = (eventName, data) => {
 
 const sendAdminUpdationEventToClient = (organizationId) => {
     if (organizationId) {
-        const query = `select* from user_info where organization_id='${organizationId}' and is_admin=0`;
+        const query = `select* from user_info where organization_id='${organizationId}' and is_admin=1`;
         executeQuery(query).then((record) => {
             notifyClient("updateAdminInfo", record);
         });

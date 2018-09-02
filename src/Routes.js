@@ -6,7 +6,7 @@ import AdminPage from './components/admin/AdminPage';
 import ExamPage from './components/users/ExamPage';
 import SelectExam from './components/users/SelectExam';
 import cookie from 'react-cookies';
-
+import TopBar from './components/common/AppTopBar';
 
 class Routes extends Component {
     currentComponent;
@@ -15,12 +15,22 @@ class Routes extends Component {
         const userId = cookie.load('userId')
         return userId ? true : false;
     }
+
+    logOut = () => {
+        cookie.remove('userId');
+        cookie.remove('organizationId');
+        cookie.remove('isAdmin');       
+    }
     renderComponent(componentName, props) {
         const organizationId = cookie.load('organizationId');
-        const componentProps = { organizationId: organizationId, ...props }
+        const isAdmin = cookie.load('isAdmin');
+        const loginInfo = { organizationId: organizationId, isAdmin: isAdmin }
+        const componentProps = { ...props, ...loginInfo }
+        const topBarProps = { logOut: this.logOut, ...loginInfo }
         this.currentComponent = componentName;
         return (
             <div className="components-holder">
+                <TopBar {...topBarProps} />
                 <this.currentComponent {...componentProps} />
             </div>
         )
@@ -58,6 +68,12 @@ class Routes extends Component {
                         }
                     }
                     } />
+                    <Route path='/logout' render={(props) => {
+                        this.logOut();
+                        return (<Redirect to="/login" />)
+
+                    }} />
+
                 </Switch>
             </BrowserRouter>
         )
