@@ -33,9 +33,6 @@
     font-weight: 500;
 }
 
-.update-questions-options-container{
-    max-width: 870px;
-}
 
 header.update-questions-header {
     display: flex;
@@ -47,6 +44,9 @@ header.update-questions-header {
     min-width: 600px
 }
 
+.update-questions-options-container {
+    height: calc(100% - 50px);
+}
 /* .edit-options {
     display: flex;
     flex-direction: column;

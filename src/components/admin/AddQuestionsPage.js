@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ComboBox from '../../material_components/ComboBox';
 import '../../styles/admin/AddQuestionsPage.css'
 import PaperSheet from '../../material_components/PaperSheet';
 import TextBox from '../../material_components/TextBox';
@@ -14,6 +13,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import WarningIcon from '@material-ui/icons/Warning';
 import { subscribeToEvent, emitEvent } from '../../Api';
 import { NotificationManager } from 'react-notifications';
+import Departments from '../common/Departments';
 
 class AddQuestions extends Component {
     constructor(props) {
@@ -27,18 +27,18 @@ class AddQuestions extends Component {
         this.correctOptions = [];
 
 
-        this.state = {
-            departments: [],
+        this.state = {           
             uploadFile: false,
             hasValidQuestions: true,
             hasValidAnswers: true,
+            hasValidCorrectOption: true,
             showWarning: false,
             fileName: '',
             showPreview: false
         }
 
         this.onComboValueChange = (val) => {
-            this.selectedDepartment = this.state.departments[val - 1];
+            this.selectedDepartment = val;
         }
 
         this.handleChange = (fieldName, val) => {
@@ -51,12 +51,13 @@ class AddQuestions extends Component {
         this.showPreview = () => {
             if (!this.state.uploadFile) {
                 let questions = document.getElementById('exam-questions').value.trim();
-                questions = questions ? questions.split(/\n/) : undefined;
+                let correctOption = document.getElementById('correctOption').value.trim();
                 let answers = document.getElementById('exam-options').value.trim();
-                answers = answers ? answers.split(/\n/) : undefined;
-                if (this.hasValidMembers(questions, answers)) {
-                    this.questions = questions;
-                    this.options = answers;
+                answers = answers ? answers.split(/\n/).join(",") : undefined;
+                if (this.hasValidMembers(questions, answers, correctOption)) {
+                    this.questions.push(questions);
+                    this.options.push(answers);
+                    this.correctOptions.push(correctOption);
                     this.setState({ showPreview: true });
                 }
 
@@ -70,7 +71,7 @@ class AddQuestions extends Component {
             }
         }
 
-        this.hasValidMembers = (questions, answers) => {
+        this.hasValidMembers = (questions, answers, correctOption) => {
             let isValid = true;
             if (!questions || !questions.length) {
                 this.questionsErrorMessage = "Questions must be specified";
@@ -82,7 +83,11 @@ class AddQuestions extends Component {
                 this.setState({ hasValidAnswers: false });
                 isValid = false;
             }
-
+            if (!correctOption || !correctOption.length) {
+                this.correctOptionErrorMessage = "Correct option must be specified";
+                this.setState({ hasValidCorrectOption: false });
+                isValid = false;
+            }
             if (Array.isArray(questions)) {
                 const hasDuplicateQuestions = questions.some((member, i) => {
                     return questions.indexOf(member) !== i
@@ -225,18 +230,22 @@ class AddQuestions extends Component {
                 return (
                     <div>
                         <ActionButton disabled={this.disableContinueButton} flatButton={true} text="Continue" onClick={this.updateQuestionOptions} />
-                        <ActionButton flatButton={true} text="Cancel" onClick={() => { this.disableContinueButton = false; this.setState({ showPreview: false }) }} />
+                        <ActionButton flatButton={true} text="Cancel" onClick={() => {
+                        this.disableContinueButton = false; this.questions = []; this.options = [], this.correctOptions = []; this.setState({
+                            showPreview: false
+                        })
+                        }} />
                     </div>
                 )
             }
         }
 
         this.updateQuestionOptions = () => {
-            const data = { organizationId: this.props.organizationId, questions: this.questions, options: this.options, correctOptions: this.correctOptions, department: (this.selectedDepartment || this.state.departments[0]) }
+            const data = { organizationId: this.props.organizationId, questions: this.questions, options: this.options, correctOptions: this.correctOptions, department: (this.selectedDepartment) }
             emitEvent("addQuestionAndOptions", data);
             this.setState({ showPreview: false });
             subscribeToEvent("questionsAddedSuccessfully", () => {
-                NotificationManager.success('Questions Saved.', 'Success');
+                
             })
 
 
@@ -254,8 +263,9 @@ class AddQuestions extends Component {
                 <div className="exam-add-question-paper-sheet">
                     <content className="exam-add-question-content">
                         <section className="left-side">
-                            <TextBox onChange={this.handleChange} errorMessage={this.questionsErrorMessage} error={!this.state.hasValidQuestions} id="exam-questions" rows="6" fieldName="Questions" multiline={true} label="Questions" placeholder="Put One Question Per Line" />
-                            <TextBox onChange={this.handleChange} errorMessage={this.answersErrorMessage} error={!this.state.hasValidAnswers} id="exam-options" rows="6" fieldName="Answers" multiline={true} label="Options" placeholder="Put Options Separated By Comma" />
+                            <TextBox onChange={this.handleChange} errorMessage={this.questionsErrorMessage} error={!this.state.hasValidQuestions} id="exam-questions" fieldName="Questions" label="Question" placeholder="Question" />
+                            <TextBox onChange={this.handleChange} errorMessage={this.answersErrorMessage} error={!this.state.hasValidAnswers} id="exam-options" rows="6" fieldName="Answers" multiline={true} label="Options" placeholder="Put One Option per Line" />
+                            <TextBox onChange={this.handleChange} errorMessage={this.correctOptionErrorMessage} error={!this.state.hasValidCorrectOption} id="correctOption" fieldName="CorrectOption" label="Correct Option" placeholder="Correct Option" />
                         </section>
                         <div className="separator">or</div>
                         <section className="right-side">
@@ -285,7 +295,8 @@ class AddQuestions extends Component {
             <div className="exam-add-question-page" style={{ "padding-top": "25px" }}>
                 <header className="add-question-header">
                     <text>Select Department:</text>
-                    <ComboBox items={this.state.departments} onChange={this.onComboValueChange} />
+                    <Departments organizationId={this.props.organizationId} onChange={this.onComboValueChange} />
+
                 </header>
                 <main>
                     <PaperSheet content={this.getPaperContent()} />
@@ -294,14 +305,6 @@ class AddQuestions extends Component {
 
             </div>
         )
-    }
-
-    componentDidMount() {
-        fetch("http://localhost:8080/getDepartments")
-            .then(res => res.json())
-            .then((departments) => {
-                this.setState({ departments: Object.keys(departments).length !== 0 ? departments.map(department => department.department_name) : [] });
-            });
     }
 }
 

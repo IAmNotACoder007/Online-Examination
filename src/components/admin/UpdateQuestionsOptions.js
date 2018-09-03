@@ -45,7 +45,7 @@ class UpdateQuestionsOptions extends Component {
             <div>
                 <header className="update-questions-header">
                     <text style={{ paddingRight: '10px' }}>Select Department:</text>
-                    <Departments onChange={this.getQuestionsOptionsForDepartment} />
+                    <Departments organizationId={this.props.organizationId} onChange={this.getQuestionsOptionsForDepartment} />
                 </header>
                 <content>
                     <PaperSheet classes="update-questions-options-paper" content={this.getQuestionsOptionsJsx()} />
@@ -173,7 +173,7 @@ class UpdateQuestionsOptions extends Component {
             }))
         } else {
             return (
-                <div>No Data Found</div>
+                <div className="no-data-found" style={{minHeight:'200px'}}>No Data Found</div>
             )
         }
     }

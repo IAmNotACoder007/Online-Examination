@@ -28,12 +28,17 @@ app.use(function (req, res, next) {
 });
 
 app.get('/getDepartments', (req, res) => {
-    const query = "select* from departments";
-    executeQuery(query).then((record) => {
-        res.send(JSON.stringify(record));
-    }).catch(() => {
+    if (!req.query.organizationId) {
+        console.log("organizationId is not found in the request");
         res.send(JSON.stringify({}));
-    });
+    } else {
+        const query = `select* from departments where organization_id='${req.query.organizationId}'`;
+        executeQuery(query).then((record) => {
+            res.send(JSON.stringify(record));
+        }).catch(() => {
+            res.send(JSON.stringify({}));
+        });
+    }
 });
 app.get('/getQuestionsOptionsForDepartments', (req, res) => {
     const departmentName = req.query.departmentName;
@@ -202,7 +207,7 @@ io.on('connection', socket => {
     socket.on("addQuestionAndOptions", (data) => {
         let table = Tables.getQuestionsOptionsTable();
         for (let i = 0; i < data.questions.length; i++) {
-            table.rows.add(`${data.organizationId}`,`${uniqueId()}`, data.questions[i], data.options[i], data.department, data.correctOptions[i]);
+            table.rows.add(`${data.organizationId}`, `${uniqueId()}`, data.questions[i], data.options[i], data.department, data.correctOptions[i]);
         }
         connectSql().then((request) => {
             request.bulk(table, (err) => {
@@ -211,6 +216,7 @@ io.on('connection', socket => {
                     console.log(err)
                     notifyClient("operationFailed");
                 } else {
+                    notifyClient("operationSuccessful", { message: "Question saved successfully" });
                     notifyClient("questionsAddedSuccessfully");
                 }
             });

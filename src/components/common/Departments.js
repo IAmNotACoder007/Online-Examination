@@ -18,7 +18,7 @@ class Departments extends Component {
     }
 
     componentDidMount() {
-        fetch("http://localhost:8080/getDepartments")
+        fetch(`http://localhost:8080/getDepartments?organizationId=${this.props.organizationId}`)
             .then(res => res.json())
             .then((departments) => {
                 this.setState({ departments: Object.keys(departments).length !== 0 ? departments.map((department) => { return department.department_name }) : [] });
@@ -30,5 +30,6 @@ class Departments extends Component {
 export default Departments;
 
 Departments.propTypes = {
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
+    organizationId: PropTypes.string.isRequired
 }

@@ -224,7 +224,7 @@ class Department extends Component {
     }
 
     componentWillMount() {
-        fetch("http://localhost:8080/getDepartments")
+        fetch(`http://localhost:8080/getDepartments?organizationId=${this.props.organizationId}`)
             .then(res => res.json())
             .then((departments) => {
                 this.updateDepartments(departments);
