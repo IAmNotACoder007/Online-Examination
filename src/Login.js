@@ -10,17 +10,21 @@ import cookie from 'react-cookies';
 import { Redirect } from 'react-router-dom';
 import CheckBox from './material_components/MaterialCheckBox'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-
+import Register from './components/RegisterPage';
 class Login extends Component {
     constructor(props) {
         super(props);
-        this.state = {
+        this.defaultState = {
             userNameError: false,
             passwordError: false,
             userName: "",
             password: "",
             navigate: false,
-            isOrganizationLogin: true
+            isOrganizationLogin: true,
+            openRegisterDialog: false
+        }
+        this.state = {
+            ...this.defaultState
         }
         this.redirectTo = "";
         this.userNameErrorMessage = "Username must be specified";
@@ -72,6 +76,39 @@ class Login extends Component {
             cookie.save('isAdmin', isAdmin);
         }
 
+        this.registerStudent = (data) => {
+            const userInfo = { organizationId: this.props.organizationId, isAdmin: false, ...data }
+            emitEvent("addNewUser", {
+                userInfo
+            });
+            this.handleDialogClose();
+        }
+        this.handleDialogClose = () => {
+            this.setState({ openRegisterDialog: false })
+        }
+        this.getLoginFooter = () => {
+            if (this.props.isStudentLogin) {
+                return (
+                    <footer>
+                        <div className="login-page-footer-container">
+                            <span className="footer-text">Don't have an account?</span><a className="create-account-link" onClick={() => {
+                                this.setState({ openRegisterDialog: true })
+                            }}>Create one</a>
+                        </div>
+                        <Register title="Register" open={this.state.openRegisterDialog} register={this.registerStudent} handleClose={this.handleDialogClose}></Register>
+                    </footer>
+                )
+            }
+        }
+
+        this.getCheckboxForOrganizationLogin = () => {
+            if (!this.props.isStudentLogin) {
+                return (
+                    <CheckBox onChange={this.isOrganizationLogin} checked={this.state.isOrganizationLogin} label="Organization Login"></CheckBox>
+                )
+            }
+        }
+
         this.getLoginPaperContent = () => {
             return (
                 <div className="login-page-container">
@@ -81,10 +118,11 @@ class Login extends Component {
                     <main className="login-page-paper-content">
                         <TextBox fieldName="userName" errorMessage={this.userNameErrorMessage} inputAdornment={<AccountCircle />} error={this.state.userNameError} required={true} id="userName" placeholder="Username" onChange={this.handleChange} />
                         <TextBox fieldName="password" errorMessage={this.passwordErrorMessage} inputAdornment={<PasswordIcon />} error={this.state.passwordError} required={true} id="password" type="password" placeholder="Password" onChange={this.handleChange} />
-                        <CheckBox onChange={this.isOrganizationLogin} checked={this.state.isOrganizationLogin} label="Organization Login"></CheckBox>
+                        {this.getCheckboxForOrganizationLogin()}
                         <ActionButton color="primary" onClick={this.doLogin} text="Login" />
                         <a className="forgot-password-link">Forgot Password?</a>
                     </main>
+                    {this.getLoginFooter()}
                 </div>
             )
         }

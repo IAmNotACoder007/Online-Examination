@@ -9,7 +9,7 @@ import Departments from './DepartmentPage';
 import '../../styles/admin/AdminPage.css'
 import UpdateQuestionOptions from './UpdateQuestionsOptions';
 import ManageAdmins from '../organization/ManageAdminsPage'
-
+import ExamsDetails from './ExamsDetails';
 
 class AdminPage extends Component {
     state = {
@@ -22,15 +22,17 @@ class AdminPage extends Component {
         const { value } = this.state;
         switch (value) {
             case 0:
-                return <Departments organizationId={this.props.organizationId}/>
+                return <Departments organizationId={this.props.organizationId} />
             case 1:
-                return <AddQuestions organizationId={this.props.organizationId}/>
+                return <AddQuestions organizationId={this.props.organizationId} />
             case 2:
-                return <UpdateQuestionOptions organizationId={this.props.organizationId}/>
+                return <UpdateQuestionOptions organizationId={this.props.organizationId} />
             case 3:
                 return <TabContainer>Item four</TabContainer>
             case 4:
-                return <ManageAdmins organizationId={this.props.organizationId}/>
+                return <ExamsDetails organizationId={this.props.organizationId} />
+            case 5:
+                return <ManageAdmins organizationId={this.props.organizationId} />
             default:
                 return (
                     <div>Sorry, page not found</div>
@@ -71,6 +73,7 @@ class AdminPage extends Component {
                                 <Tab label="Add Questions/Options" />
                                 <Tab label="Edit/Delete Questions/Options" />
                                 <Tab label="Setting" />
+                                <Tab label="Exams" />
                                 {this.getTabsWithOrganizationsPermission()}
                             </Tabs>
                         </Paper>

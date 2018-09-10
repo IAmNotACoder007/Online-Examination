@@ -9,17 +9,17 @@ class ActionButton extends Component {
     }
 
     render() {
-        const primaryButtonTheme=this.props.primaryButtonTheme;
-        const secondaryButtonTheme=this.props.secondaryButtonTheme;
+        const primaryButtonTheme = this.props.primaryButtonTheme;
+        const secondaryButtonTheme = this.props.secondaryButtonTheme;
         const theme = createMuiTheme({
             palette: {
-                primary:primaryButtonTheme,                               
-                secondary:secondaryButtonTheme                
+                primary: primaryButtonTheme,
+                secondary: secondaryButtonTheme
             }
         });
         return (
             <MuiThemeProvider theme={theme}>
-                <Button disabled={this.props.disabled} variant={this.getButtonType()} id={this.props.id} size={this.props.size} color={this.props.color} onClick={this.props.onClick} className={this.props.class}>
+                <Button disabled={this.props.disabled} style={this.props.styles} variant={this.getButtonType()} id={this.props.id} size={this.props.size} color={this.props.color} onClick={this.props.onClick} className={this.props.class}>
                     {this.props.text}
                 </Button>
             </MuiThemeProvider>
@@ -39,6 +39,7 @@ ActionButton.propTypes = {
     flatButton: PropTypes.bool,
     primaryButtonTheme: PropTypes.object,
     secondaryButtonTheme: PropTypes.object,
+    styles: PropTypes.object
 
 }
 
@@ -60,7 +61,8 @@ ActionButton.defaultProps = {
         main: '#E91E63',
         dark: '#AD1457',
         contrastText: '#fff',
-    }
+    },
+    styles: {}
 }
 
 export default ActionButton;

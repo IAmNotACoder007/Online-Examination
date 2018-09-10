@@ -18,6 +18,10 @@ class TextBox extends Component {
         if (this.props.error)
             return <FormHelperText id="name-error-text">{this.props.errorMessage}</FormHelperText>
     }
+
+    isDisabled = () => {
+        if (this.props.disabled) return "disabled"
+    }
     render() {
         const primaryTheme = this.props.primaryTheme;
         const secondaryTheme = this.props.secondaryTheme;
@@ -50,6 +54,7 @@ class TextBox extends Component {
                             </InputAdornment>
                         ),
                     }}
+                    disabled={this.props.disabled}
                 />
                 {this.getErrorJsx()}
 
@@ -75,7 +80,8 @@ TextBox.propTypes = {
     inputAdornment: PropTypes.object,
     fieldName: PropTypes.string.required,
     multiline: PropTypes.bool,
-    rows: PropTypes.string
+    rows: PropTypes.string,
+    disabled: PropTypes.bool
 }
 
 TextBox.defaultProps = {
@@ -103,7 +109,8 @@ TextBox.defaultProps = {
     inputAdornment: '',
     onChange: undefined,
     multiline: false,
-    rows: "5"
+    rows: "5",
+    disabled: false
 }
 
 export default TextBox;
