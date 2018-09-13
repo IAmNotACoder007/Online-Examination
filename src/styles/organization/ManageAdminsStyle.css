@@ -13,6 +13,7 @@
 .manage-admins-page-holder .paper-sheet {
     height: 90%;
     width: 50%;
+    max-width: 450px;
 }
 
 .manage-admins-content {

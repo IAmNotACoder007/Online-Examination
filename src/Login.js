@@ -31,7 +31,7 @@ class Login extends Component {
         this.passwordErrorMessage = "Password must be specified";
         this.doLogin = () => {
             this.validateFields();
-            if (this.state.isOrganizationLogin)
+            if (this.state.isOrganizationLogin && !this.props.isStudentLogin)
                 emitEvent("doOrganizationLogin", { userId: this.state.userName, password: this.state.password });
             else
                 emitEvent("doLogin", { userName: this.state.userName, password: this.state.password });
@@ -41,10 +41,13 @@ class Login extends Component {
             this.setState({ isOrganizationLogin: isOrganizationLogin })
         }
 
+        this.getQueryStringValueFromUrl = (queryString) => {
+            const urlSearchParams = new URLSearchParams(window.location.search);
+            return urlSearchParams.get(queryString)
+        }
         subscribeToEvent("loginSuccessful", (data) => {
             const userInfo = JSON.parse(data)[0];
-            const urlSearchParams = new URLSearchParams(window.location.search);
-            const returnUrl = urlSearchParams.get('returnUrl');
+            const returnUrl = this.getQueryStringValueFromUrl('returnUrl');
             if (returnUrl) { this.redirectTo = new URL(returnUrl); }
             else {
                 if (userInfo.is_admin) {
@@ -54,7 +57,7 @@ class Login extends Component {
                     this.redirectTo = new URL(`${window.location.origin}/selectExam`);
                 }
             }
-            this.updateCookies(userInfo.user_id, userInfo.organization_id, userInfo.is_admin);
+            this.updateCookies(userInfo.user_id, userInfo.organization_id, !!parseInt(userInfo.is_admin));
             this.setState({ navigate: true });
         });
 
@@ -77,10 +80,9 @@ class Login extends Component {
         }
 
         this.registerStudent = (data) => {
-            const userInfo = { organizationId: this.props.organizationId, isAdmin: false, ...data }
-            emitEvent("addNewUser", {
-                userInfo
-            });
+            const orgid = this.getQueryStringValueFromUrl('orgId');
+            const userInfo = { organizationId: orgid, isAdmin: false, ...data }
+            emitEvent("addNewUser", userInfo);
             this.handleDialogClose();
         }
         this.handleDialogClose = () => {

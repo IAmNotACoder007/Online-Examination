@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import TextBox from '../material_components/TextBox';
 import ActionButton from '../material_components/ActionButton';
-import { emitEvent } from '../Api.js';
 import '../../node_modules/react-notifications/dist/react-notifications.css';
 import MaterialDialog from '../material_components/Dialog';
 import PropTypes from 'prop-types';

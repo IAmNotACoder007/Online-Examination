@@ -68,7 +68,7 @@ class TopBar extends Component {
                             open={open}
                             onClose={this.handleClose}
                         >
-                            <MenuItem onClick={this.handleClose}>Chnage password</MenuItem>                            
+                            <MenuItem onClick={this.handleClose}>Change password</MenuItem>                            
                             <div className="top-bar-link"><Link to="/logout">Logout</Link></div>
                         </Menu>
                     </div>

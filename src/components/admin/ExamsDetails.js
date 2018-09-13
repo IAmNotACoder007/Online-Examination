@@ -59,7 +59,7 @@ class ExamsDetails extends Component {
                         ContentProps={{
                             'aria-describedby': 'message-id',
                         }}
-                        message={<span id="message-id">Copied!</span>}
+                        message={<span id="message-id">Copied to clipboard!</span>}
                         action={[
                             <CloseIcon onClick={this.handleClose} />
                         ]}

@@ -9,9 +9,9 @@
 
 .question-options-container {
     background: #eeeeee;
-    padding: 30px;    
+    padding: 30px;
     width: 500px;
-    margin-left: 10px;   
+    margin-left: 10px;
     display: flex;
     flex-direction: column;
     height: 310px;
@@ -35,4 +35,11 @@
 
 .radio-buttons-fieldset {
     flex: 1;
+}
+
+.alert-msg-container {
+    display: flex;
+    align-items: center;
+    text-transform: capitalize;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 }

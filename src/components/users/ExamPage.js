@@ -24,7 +24,8 @@ class Exam extends Component {
         disableNextButton: false,
         disableBackButton: true,
         disableFinishButton: true,
-        askConfirmation: false
+        askConfirmation: false,
+        noQuestionsFound: false,
     }
 
     handleChange = event => {
@@ -53,6 +54,18 @@ class Exam extends Component {
                         })}
                     </RadioGroup>
                 </FormControl>
+            )
+        }
+    }
+
+    getActionButtons = () => {
+        if (this.questionsAndOptions.length) {
+            return (
+                <div className="buttons-container">
+                    <ActionButton size="large" flatButton={true} disabled={this.state.disableNextButton} class="buttons" text="Next" onClick={this.nextQuestion} />
+                    <ActionButton size="large" flatButton={true} disabled={this.state.disableBackButton} class="buttons" text="Back" onClick={this.previousQuestion} />
+                    <ActionButton size="large" flatButton={true} disabled={this.state.disableFinishButton} class="buttons" text="Finish" onClick={() => { this.setState({ askConfirmation: true }) }} />
+                </div>
             )
         }
     }
@@ -100,13 +113,21 @@ class Exam extends Component {
     }
 
     getDialogContent = () => {
-        return <div style={{ display: 'flex', alignItems: "center" }}>
+        return <div className="alert-msg-container">
             <WarningIcon style={{ height: "60px", width: '60px' }} color="error" />
-            You are about to finish the exam</div>
+            {this.getAlertMessage()}
+        </div>
+    }
+
+    getAlertMessage = () => {
+        if (this.state.askConfirmation)
+            return "You are about to finish the exam"
+        else
+            return `Please contact your Administrator, No question has been added for '${this.departmentName}'`;
     }
 
     closeDialog = () => {
-        this.setState({ askConfirmation: false });
+        this.setState({ askConfirmation: false, noQuestionsFound: false });
     }
 
     getDialogButtons = () => {
@@ -144,16 +165,13 @@ class Exam extends Component {
                 <div className="exam-holder">
                     <div className="question-options-container">
                         {this.getRadioButtons()}
-                        <div className="buttons-container">
-                            <ActionButton size="large" flatButton={true} disabled={this.state.disableNextButton} class="buttons" text="Next" onClick={this.nextQuestion} />
-                            <ActionButton size="large" flatButton={true} disabled={this.state.disableBackButton} class="buttons" text="Back" onClick={this.previousQuestion} />
-                            <ActionButton size="large" flatButton={true} disabled={this.state.disableFinishButton} class="buttons" text="Finish" onClick={() => { this.setState({ askConfirmation: true }) }} />
-                        </div>
+                        {this.getActionButtons()}
                     </div>
-                    <Dialog isOpen={this.state.askConfirmation} isAlertDialog={true} dialogContent={this.getDialogContent()} dialogButtons={this.getDialogButtons()} dialogTitle="Finish Exam" />
+                    <Dialog isOpen={this.state.askConfirmation || this.state.noQuestionsFound} isAlertDialog={true} dialogContent={this.getDialogContent()} dialogButtons={this.getDialogButtons()} dialogTitle={this.state.noQuestionsFound ? "Attention" : "Finish Exam"} />
                 </div>
             </MuiThemeProvider>
         )
+
     }
 
     componentDidMount() {
@@ -162,13 +180,17 @@ class Exam extends Component {
         fetch(`http://localhost:8080/getQuestionsOptionsForDepartments?departmentName=${this.departmentName}`).then((response) => response.json())
             .then((data) => {
                 this.questionsAndOptions = this.remainingQuestions = data;
-                this.result = data.map((question) => {
-                    return { id: question.id, selectedOption: '' };
-                });
-                if (this.questionsAndOptions.length === 1)
-                    this.setState({ currentQuestionId: data[0].id, disableNextButton: true, disableFinishButton: false })
-                else
-                    this.setState({ currentQuestionId: data[0].id })
+                if (data && data.length) {
+                    this.result = data.map((question) => {
+                        return { id: question.id, selectedOption: '' };
+                    });
+                    if (this.questionsAndOptions.length === 1)
+                        this.setState({ currentQuestionId: data[0].id, disableNextButton: true, disableFinishButton: false })
+                    else
+                        this.setState({ currentQuestionId: data[0].id })
+                } else {
+                    this.setState({ noQuestionsFound: true });
+                }
             });
     }
 }

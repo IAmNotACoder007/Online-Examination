@@ -21,6 +21,11 @@ class Routes extends Component {
         cookie.remove('organizationId');
         cookie.remove('isAdmin');
     }
+
+    isStudent = () => {
+        const isAdmin= cookie.load('isAdmin');
+        return isAdmin==="false";
+    }
     renderComponent(componentName, props) {
         const organizationId = cookie.load('organizationId');
         const isAdmin = cookie.load('isAdmin');
@@ -42,8 +47,8 @@ class Routes extends Component {
                     <Route exact path='/' render={() =>
                         <Redirect to="/login" />
                     } />
-                    <Route path='/login' render={(props) => {                        
-                       return(this.renderComponent(Login,props.location.state));
+                    <Route path='/login' render={(props) => {
+                        return (this.renderComponent(Login, props.location.state));
                     }} />
                     <Route path='/register' render={() => this.renderComponent(Register)} />
                     <Route path='/admin' render={(props) => {
@@ -59,7 +64,7 @@ class Routes extends Component {
                     }} />
                     <Route path='/selectExam' render={() => this.renderComponent(SelectExam)} />
                     <Route path='/exam' render={() => {
-                        if (this.isLoggedIn())
+                        if (this.isLoggedIn() && this.isStudent())
                             return (this.renderComponent(ExamPage))
                         else {
                             return (<Redirect to={{

@@ -14,6 +14,7 @@
 .department-container .paper-sheet {
     height: 90%;
     width: 50%;
+    max-width: 450px;
 }
 
 .department-container .paper-sheet>div {
