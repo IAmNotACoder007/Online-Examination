@@ -23,13 +23,14 @@ class Routes extends Component {
     }
 
     isStudent = () => {
-        const isAdmin= cookie.load('isAdmin');
-        return isAdmin==="false";
+        const isAdmin = cookie.load('isAdmin');
+        return isAdmin === "false";
     }
     renderComponent(componentName, props) {
         const organizationId = cookie.load('organizationId');
         const isAdmin = cookie.load('isAdmin');
-        const loginInfo = { organizationId: organizationId, isAdmin: isAdmin }
+        const userId = cookie.load('userId')
+        const loginInfo = { organizationId: organizationId, isAdmin: isAdmin, userId: userId }
         const componentProps = { ...props, ...loginInfo }
         const topBarProps = { logOut: this.logOut, ...loginInfo }
         this.currentComponent = componentName;

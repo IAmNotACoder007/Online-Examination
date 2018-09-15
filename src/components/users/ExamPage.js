@@ -10,7 +10,8 @@ import "../../styles/users/Exam.css";
 import ActionButton from '../../material_components/ActionButton'
 import Dialog from '../../material_components/Dialog'
 import WarningIcon from '@material-ui/icons/Warning';
-
+import Enumerable from 'linq';
+import { emitEvent } from '../../Api'
 
 class Exam extends Component {
     departmentName = undefined;
@@ -109,7 +110,21 @@ class Exam extends Component {
     }
 
     finishExam = () => {
-
+        let totalMarks = 0;
+        this.questionsAndOptions.forEach(info => {
+            const answer = Enumerable.from(this.result).where(i => i.id === info.id).firstOrDefault();
+            if (answer.selectedOption === info.correct_option) totalMarks = totalMarks + 1;
+        });
+        const info = this.questionsAndOptions[0];
+        const data = {
+            organizationId: info.organization_id,
+            studentId: this.props.userId,
+            departmentName: info.department,
+            totalMarks: totalMarks,
+            outOf: this.questionsAndOptions.length,
+            examDate: new Date().toUTCString()
+        };
+        emitEvent("updateResult", data);
     }
 
     getDialogContent = () => {
@@ -120,10 +135,9 @@ class Exam extends Component {
     }
 
     getAlertMessage = () => {
-        if (this.state.askConfirmation)
-            return "You are about to finish the exam"
-        else
+        if (this.state.noQuestionsFound)
             return `Please contact your Administrator, No question has been added for '${this.departmentName}'`;
+        return "You are about to finish the exam"
     }
 
     closeDialog = () => {

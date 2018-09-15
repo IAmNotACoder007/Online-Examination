@@ -321,7 +321,7 @@ io.on('connection', socket => {
                 console.log(err)
             });
         }
-    })
+    });
 
     socket.on("deleteAdmin", (data) => {
         if (!data.userId) {
@@ -337,7 +337,34 @@ io.on('connection', socket => {
                 console.log(err)
             });
         }
-    })
+    });
+
+    socket.on("updateResult", (data) => {
+        if (!data.organizationId || !data.studentId) {
+            console.log("studentId or organizationId is not found in data");
+            return;
+        }
+        const selectQuery = `select full_name from user_info where user_id='${data.studentId}'`;
+        executeQuery(selectQuery).then((studDetail) => {
+            let table = Tables.getResultsTable();
+            table.rows.add(`${data.organizationId}`, `${data.studentId}`, `${studDetail[0].full_name}`, `${data.departmentName}`, data.totalMarks,
+                data.outOf, `${data.examDate}`);
+            connectSql().then((request) => {
+                request.bulk(table, (err) => {
+                    sql.close();
+                    if (err) {
+                        console.log(err);
+                        notifyClient("resultUpdationFailed");
+                    }
+                    else {
+                        notifyClient("resultUpdated");
+                    }
+                })
+            });
+        }).catch((err) => {
+            console.log(err)
+        });
+    });
 
 });
 

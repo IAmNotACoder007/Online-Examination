@@ -47,6 +47,19 @@ class Tables {
         return organizationTable;
     }
 
+    static getResultsTable(){
+        const examsResultTable = new sql.Table("exams_result");
+        examsResultTable.create = true;
+        examsResultTable.columns.add('organization_id', sql.NVarChar(50), { nullable: false });
+        examsResultTable.columns.add('student_id', sql.NVarChar(255), { nullable: false });
+        examsResultTable.columns.add('student_name', sql.NVarChar(255), { nullable: false });
+        examsResultTable.columns.add('department_name', sql.NVarChar(255), { nullable: false });
+        examsResultTable.columns.add('total_marks', sql.Numeric, { nullable: false });
+        examsResultTable.columns.add('out_of', sql.Numeric, { nullable: false });
+        examsResultTable.columns.add('exam_date', sql.NVarChar(255), { nullable: false });
+        return examsResultTable;
+    }
+
 }
 
 module.exports=Tables;
