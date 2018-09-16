@@ -26,7 +26,7 @@ PaperSheet.defaultProps = {
 
 PaperSheet.propTypes = {
     classes: PropTypes.string,
-    content: PropTypes.object.isRequired,
+    content: PropTypes.any.isRequired,
     elevation: PropTypes.number
 };
 

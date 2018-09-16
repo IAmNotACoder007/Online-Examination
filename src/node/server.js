@@ -62,6 +62,23 @@ app.get('/getAdminsForOrganization', (req, res) => {
     });
 });
 
+app.get("/getStudentsResultForOrganization",(req,res)=>{
+    const organizationId = req.query.organizationId;
+    const departmentName = req.query.departmentName;
+    if(!organizationId||!departmentName)
+    {
+        console.log("DepartmentName or OrganizationId is not fount in the request");
+        res.send(JSON.stringify({}));
+    }else{
+        const selectQuery=`select* from exams_result where organization_id='${organizationId}' and department_name='${departmentName}'`;
+        executeQuery(selectQuery).then((record) => {
+            res.send(JSON.stringify(record));
+        }).catch(() => {
+            res.send(JSON.stringify({}));
+        });
+    }
+})
+
 
 app.post('/registerOrganization', jsonParser, (req, res) => {
     makeSureDatabaseExits();

@@ -4,18 +4,23 @@ import TextBox from '../../material_components/TextBox';
 import ActionButton from '../../material_components/ActionButton';
 import Snackbar from '@material-ui/core/Snackbar';
 import CloseIcon from '@material-ui/icons/Close';
-
+import PaperSheet from '../../material_components/PaperSheet';
+import '../../styles/users/Exam.css'
 class ExamsDetails extends Component {
     defaultState = {
         selectedDepartmet: "",
-        open: false
+        open: false,
+        studentsDetail: []
     }
 
     state = { ...this.defaultState }
+
     onDepartmentChange = (name) => {
         const url = `${window.location.origin}/exam?departmentName=${name}&orgId=${this.props.organizationId}`
         document.getElementById("examUrl").value = url;
-        this.setState({ selectedDepartmet: name });
+        this.setState({ selectedDepartmet: name }, () => {
+            this.refreshStudentsDetail()
+        });
     }
     handleClose = () => {
         this.setState({ open: false });
@@ -44,7 +49,10 @@ class ExamsDetails extends Component {
     render() {
         return (
             <div>
-                <Departments onChange={this.onDepartmentChange} organizationId={this.props.organizationId}></Departments>
+                <div style={{ display: 'flex', alignItems: 'center',paddingTop:'10px' }}>
+                    <text style={{paddingRight:'10px'}}>Select Department:</text>
+                    <Departments onChange={this.onDepartmentChange} organizationId={this.props.organizationId}></Departments>
+                </div>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <TextBox disabled={true} id="examUrl" fieldName="examUrl" fullWidth={true} label="Exam Url"></TextBox>
                     <ActionButton styles={{ height: '40px', marginLeft: '10px' }} text="Copy" onClick={this.copyUrl} flatButton={true}></ActionButton>
@@ -65,8 +73,44 @@ class ExamsDetails extends Component {
                         ]}
                     />
                 </div>
+                <PaperSheet content={this.getView()}></PaperSheet>
             </div>
         )
+    }
+
+    getView() {
+        if (this.state.studentsDetail && this.state.studentsDetail.length) {
+            return this.state.studentsDetail.map((detail) => {
+                return (
+                    <div className="students-details" key={detail.student_id}>
+                        <text className="student-name">{detail.student_name}</text>
+                        <time>{this.getFormattedDateTimeString(detail.exam_date)}</time>
+                        <text>{detail.total_marks}/{detail.out_of}</text>
+                    </div>
+                )
+            });
+        } else {
+            return (
+                <div className="no-data-found">No Data Found</div>
+            )
+        }
+    }
+
+
+    getFormattedDateTimeString(date) {
+        if (!date) return '';
+        const dateObject = new Date(date);
+        const hours = dateObject.getHours();
+        const minutes = dateObject.getMinutes();
+        const seconds = dateObject.getSeconds();
+        return `${dateObject.toLocaleDateString('en-US')} ${hours}:${minutes}:${seconds}`
+    }
+
+    refreshStudentsDetail() {
+        fetch(`http://localhost:8080/getStudentsResultForOrganization?departmentName=${this.state.selectedDepartmet}&organizationId=${this.props.organizationId}`).then((response) => response.json())
+            .then((data) => {
+                this.setState({ studentsDetail: data });
+            });
     }
 }
 

@@ -12,7 +12,6 @@ import ErrorIcon from '@material-ui/icons/ErrorOutline';
 import ClearIcon from '@material-ui/icons/Clear';
 import WarningIcon from '@material-ui/icons/Warning';
 import { subscribeToEvent, emitEvent } from '../../Api';
-import { NotificationManager } from 'react-notifications';
 import Departments from '../common/Departments';
 
 class AddQuestions extends Component {
@@ -292,7 +291,7 @@ class AddQuestions extends Component {
     render() {
         const dialogClass = this.showWarning ? "preview-error-dialog" : "preview-dialog"
         return (
-            <div className="exam-add-question-page" style={{ "padding-top": "25px" }}>
+            <div className="exam-add-question-page">
                 <header className="add-question-header">
                     <text>Select Department:</text>
                     <Departments organizationId={this.props.organizationId} onChange={this.onComboValueChange} />
