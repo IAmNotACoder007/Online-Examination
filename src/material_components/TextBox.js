@@ -77,8 +77,8 @@ TextBox.propTypes = {
     errorMessage: PropTypes.string,
     primaryTheme: PropTypes.object,
     secondaryTheme: PropTypes.object,
-    inputAdornment: PropTypes.object,
-    fieldName: PropTypes.string.required,
+    inputAdornment: PropTypes.any,
+    fieldName: PropTypes.string.isRequired,
     multiline: PropTypes.bool,
     rows: PropTypes.string,
     disabled: PropTypes.bool
@@ -110,7 +110,7 @@ TextBox.defaultProps = {
     onChange: undefined,
     multiline: false,
     rows: "5",
-    disabled: false
+    disabled: false,  
 }
 
 export default TextBox;

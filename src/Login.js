@@ -11,6 +11,9 @@ import { Redirect } from 'react-router-dom';
 import CheckBox from './material_components/MaterialCheckBox'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Register from './components/RegisterPage';
+import Dialog from './material_components/Dialog';
+import WarningIcon from '@material-ui/icons/Warning';
+
 class Login extends Component {
     constructor(props) {
         super(props);
@@ -21,7 +24,8 @@ class Login extends Component {
             password: "",
             navigate: false,
             isOrganizationLogin: true,
-            openRegisterDialog: false
+            openRegisterDialog: false,
+            isSuspendedAccount: false,
         }
         this.state = {
             ...this.defaultState
@@ -51,7 +55,12 @@ class Login extends Component {
             if (returnUrl) { this.redirectTo = new URL(returnUrl); }
             else {
                 if (userInfo.is_admin) {
-                    this.redirectTo = new URL(`${window.location.origin}/admin`);
+                    if (userInfo.is_suspended) {
+                        this.setState({ isSuspendedAccount: true });
+                        return;
+                    } else {
+                        this.redirectTo = new URL(`${window.location.origin}/admin`);
+                    }
 
                 } else {
                     this.redirectTo = new URL(`${window.location.origin}/selectExam`);
@@ -147,6 +156,19 @@ class Login extends Component {
             }
         }
 
+        this.getSuspendedAccountsMessage = () => {
+            return (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <WarningIcon style={{ height: "60px", width: '60px' }} color="error" />
+                    <text>Your account has been temporary suspended, Please contact your organization</text>
+                </div>
+            )
+        }
+
+        this.getSuspendedAccountMsgDialogButton = () => {
+            return <ActionButton flatButton={true} text="Ok" onClick={() => { this.setState({ isSuspendedAccount: false }) }} />
+        }
+
     }
     render() {
         const theme = createMuiTheme({
@@ -176,6 +198,7 @@ class Login extends Component {
             <MuiThemeProvider theme={theme}>
                 <div className="login-container" >
                     <PaperSheet classes="login-page-paper" content={this.getLoginPaperContent()} />
+                    <Dialog isAlertDialog={true} isOpen={this.state.isSuspendedAccount} dialogTitle="Warning" dialogButtons={this.getSuspendedAccountMsgDialogButton()} dialogContent={this.getSuspendedAccountsMessage()}></Dialog>
                 </div>
             </MuiThemeProvider>
         )

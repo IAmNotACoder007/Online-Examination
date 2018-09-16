@@ -11,9 +11,16 @@ import ActionButton from '../../material_components/ActionButton'
 import Dialog from '../../material_components/Dialog'
 import WarningIcon from '@material-ui/icons/Warning';
 import Enumerable from 'linq';
-import { emitEvent } from '../../Api'
+import { emitEvent, subscribeToEvent } from '../../Api'
+import { Redirect } from 'react-router-dom';
 
 class Exam extends Component {
+    constructor(props) {
+        super(props);
+        subscribeToEvent("resultUpdated", () => {
+            this.setState({ redirectToThankyouPage: true })
+        })
+    }
     departmentName = undefined;
     questionsAndOptions = [];
     remainingQuestions = [];
@@ -27,6 +34,7 @@ class Exam extends Component {
         disableFinishButton: true,
         askConfirmation: false,
         noQuestionsFound: false,
+        redirectToThankyouPage: false
     }
 
     handleChange = event => {
@@ -155,6 +163,9 @@ class Exam extends Component {
         }
     }
     render() {
+        if(this.state.redirectToThankyouPage){
+            return(<Redirect to="/thankyou" />)
+        }
         const primaryButtonTheme = {
             light: '#90CAF9',
             main: '#2196F3',

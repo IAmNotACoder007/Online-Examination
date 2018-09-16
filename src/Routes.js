@@ -7,6 +7,8 @@ import ExamPage from './components/users/ExamPage';
 import SelectExam from './components/users/SelectExam';
 import cookie from 'react-cookies';
 import TopBar from './components/common/AppTopBar';
+import Thankyou from './components/users/ThankyouPage';
+
 
 class Routes extends Component {
     currentComponent;
@@ -81,6 +83,7 @@ class Routes extends Component {
                         return (<Redirect to="/login" />)
 
                     }} />
+                    <Route path='/thankyou' render={() => <Thankyou/>} />
 
                 </Switch>
             </BrowserRouter>
