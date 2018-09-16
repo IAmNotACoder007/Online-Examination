@@ -50,6 +50,7 @@ class Tables {
     static getResultsTable(){
         const examsResultTable = new sql.Table("exams_result");
         examsResultTable.create = true;
+        examsResultTable.columns.add('id', sql.NVarChar(50), { nullable: false });
         examsResultTable.columns.add('organization_id', sql.NVarChar(50), { nullable: false });
         examsResultTable.columns.add('student_id', sql.NVarChar(255), { nullable: false });
         examsResultTable.columns.add('student_name', sql.NVarChar(255), { nullable: false });

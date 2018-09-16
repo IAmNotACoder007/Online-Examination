@@ -30,7 +30,9 @@ class Exam extends Component {
     }
 
     handleChange = event => {
-        this.setState({ selectedOption: event.target.value });
+        this.setState({ selectedOption: event.target.value }, () => {
+            this.updateResult();
+        });
     };
 
     getRadioButtons = () => {
@@ -72,7 +74,6 @@ class Exam extends Component {
     }
 
     nextQuestion = () => {
-        this.updateResult();
         const currentQuestionIndex = this.getCurrentQuestionIndex();
         const nextQuestion = this.questionsAndOptions.filter((question) => {
             if (question.id === this.result[currentQuestionIndex + 1].id) return question;
@@ -92,7 +93,6 @@ class Exam extends Component {
         }
     }
     previousQuestion = () => {
-        this.updateResult();
         const currentQuestionIndex = this.getCurrentQuestionIndex();
         const isFirstQuestion = (currentQuestionIndex - 1) === 0;
         const previousQuestion = this.questionsAndOptions.filter((question) => {

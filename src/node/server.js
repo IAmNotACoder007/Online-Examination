@@ -62,15 +62,14 @@ app.get('/getAdminsForOrganization', (req, res) => {
     });
 });
 
-app.get("/getStudentsResultForOrganization",(req,res)=>{
+app.get("/getStudentsResultForOrganization", (req, res) => {
     const organizationId = req.query.organizationId;
     const departmentName = req.query.departmentName;
-    if(!organizationId||!departmentName)
-    {
+    if (!organizationId || !departmentName) {
         console.log("DepartmentName or OrganizationId is not fount in the request");
         res.send(JSON.stringify({}));
-    }else{
-        const selectQuery=`select* from exams_result where organization_id='${organizationId}' and department_name='${departmentName}'`;
+    } else {
+        const selectQuery = `select* from exams_result where organization_id='${organizationId}' and department_name='${departmentName}'`;
         executeQuery(selectQuery).then((record) => {
             res.send(JSON.stringify(record));
         }).catch(() => {
@@ -364,7 +363,7 @@ io.on('connection', socket => {
         const selectQuery = `select full_name from user_info where user_id='${data.studentId}'`;
         executeQuery(selectQuery).then((studDetail) => {
             let table = Tables.getResultsTable();
-            table.rows.add(`${data.organizationId}`, `${data.studentId}`, `${studDetail[0].full_name}`, `${data.departmentName}`, data.totalMarks,
+            table.rows.add(`${uniqueId()}`, `${data.organizationId}`, `${data.studentId}`, `${studDetail[0].full_name}`, `${data.departmentName}`, data.totalMarks,
                 data.outOf, `${data.examDate}`);
             connectSql().then((request) => {
                 request.bulk(table, (err) => {

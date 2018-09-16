@@ -44,12 +44,17 @@
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 }
 
-.students-details{
+.students-details {
     display: flex;
     justify-content: space-between;
     padding-left: 10px;
     padding-right: 10px;
     height: 50px;
     align-items: center;
-    border-bottom: 1px solid rgba(224, 224, 224, 1);    
+    border-bottom: 1px solid rgba(224, 224, 224, 1);
+}
+
+.admin-page-main-container .check-box {
+    display: flex;
+    justify-content: flex-end;
 }

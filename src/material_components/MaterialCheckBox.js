@@ -8,13 +8,13 @@ class MaterialCheckBox extends Component {
         [this.props.value]: [this.props.checked]
     }
     handleChange = name => event => {
-        this.props.onChange(name,event.target.checked)       
+        this.props.onChange(name, event.target.checked)
     };
     render() {
         return (
-            <FormControlLabel
+            <FormControlLabel className="check-box"
                 control={
-                    <Checkbox
+                    <Checkbox disabled={this.props.disabled}
                         checked={this.props.checked}
                         onChange={this.handleChange(this.props.value)}
                         value={this.props.value}
@@ -32,15 +32,16 @@ MaterialCheckBox.propTypes = {
     onChange: PropTypes.func.isRequired,
     value: PropTypes.string,
     label: PropTypes.string,
-    color:PropTypes.string
-
+    color: PropTypes.string,
+    disabled: PropTypes.bool
 }
 
 MaterialCheckBox.defaultProps = {
     checked: false,
     value: "checkBox",
     label: "Check Box",
-    color:"primary"
+    color: "primary",
+    disabled: false
 }
 
 export default MaterialCheckBox;
