@@ -76,14 +76,14 @@ class ExamsDetails extends Component {
     }
     render() {
         return (
-            <div>
+            <div className="exam-details-holder" style={{ height: 'calc(100% - 50px)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', paddingTop: '10px' }}>
                     <text style={{ paddingRight: '10px' }}>Select Department:</text>
                     <Departments onChange={this.onDepartmentChange} organizationId={this.props.organizationId}></Departments>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <TextBox disabled={true} id="examUrl" fieldName="examUrl" fullWidth={true} label="Exam Url"></TextBox>
-                    <ActionButton styles={{ height: '40px', marginLeft: '10px' }} text="Copy" onClick={this.copyUrl} flatButton={true}></ActionButton>
+                    <TextBox className="exam-url" disabled={true} id="examUrl" fieldName="examUrl" fullWidth={true} label="Exam Url"></TextBox>
+                    <ActionButton styles={{ height: '40px', marginLeft: '10px' }} text="Copy Url" onClick={this.copyUrl} flatButton={true}></ActionButton>
                     <Snackbar
                         anchorOrigin={{
                             vertical: 'bottom',
@@ -101,7 +101,9 @@ class ExamsDetails extends Component {
                         ]}
                     />
                 </div>
-                <CheckBox disabled={this.state.studentsDetail.length <= 0} checked={this.state.hideDuplicateRecords} onChange={this.onChange} label="Hide Duplicate Record"></CheckBox>
+                <div className="hide-duplicate-record-cb-container">
+                    <CheckBox disabled={this.state.studentsDetail.length <= 0} checked={this.state.hideDuplicateRecords} onChange={this.onChange} label="Hide Duplicate Record"></CheckBox>
+                </div>
                 <PaperSheet content={this.getView()}></PaperSheet>
             </div>
         )
@@ -115,6 +117,7 @@ class ExamsDetails extends Component {
                         <text className="student-name">{detail.student_name}</text>
                         <time>{this.getFormattedDateTimeString(detail.exam_date)}</time>
                         <text>{detail.total_marks}/{detail.out_of}</text>
+                        <a className="send-email-link">Send Email</a>
                     </div>
                 )
             });

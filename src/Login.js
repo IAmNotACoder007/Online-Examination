@@ -57,7 +57,7 @@ class Login extends Component {
                 if (userInfo.is_admin) {
                     if (userInfo.is_suspended) {
                         this.setState({ isSuspendedAccount: true });
-                        return;
+                        return false;
                     } else {
                         this.redirectTo = new URL(`${window.location.origin}/admin`);
                     }

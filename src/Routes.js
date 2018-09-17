@@ -28,13 +28,14 @@ class Routes extends Component {
         const isAdmin = cookie.load('isAdmin');
         return isAdmin === "false";
     }
+
     renderComponent(componentName, props) {
         const organizationId = cookie.load('organizationId');
-        const isAdmin = cookie.load('isAdmin');
+        const isAdmin = cookie.load('isAdmin') === "true";
         const userId = cookie.load('userId')
         const loginInfo = { organizationId: organizationId, isAdmin: isAdmin, userId: userId }
         const componentProps = { ...props, ...loginInfo }
-        const topBarProps = { logOut: this.logOut, ...loginInfo }
+        const topBarProps = { logOut: this.logOut, ...componentProps }
         this.currentComponent = componentName;
         return (
             <div className="components-holder">
@@ -65,10 +66,10 @@ class Routes extends Component {
                             }} />)
                         }
                     }} />
-                    <Route path='/selectExam' render={() => this.renderComponent(SelectExam)} />
+                    <Route path='/selectExam' render={() => this.renderComponent(SelectExam, { isStudentLogin: true })} />
                     <Route path='/exam' render={() => {
                         if (this.isLoggedIn() && this.isStudent())
-                            return (this.renderComponent(ExamPage))
+                            return (this.renderComponent(ExamPage, { isStudentLogin: true }))
                         else {
                             return (<Redirect to={{
                                 pathname: '/login',
@@ -83,7 +84,10 @@ class Routes extends Component {
                         return (<Redirect to="/login" />)
 
                     }} />
-                    <Route path='/thankyou' render={() => <Thankyou/>} />
+                    <Route path='/thankyou' render={() => {
+                        this.logOut();
+                        return (<Thankyou />)
+                    }} />
 
                 </Switch>
             </BrowserRouter>

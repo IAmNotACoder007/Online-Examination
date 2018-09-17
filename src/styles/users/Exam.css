@@ -54,7 +54,31 @@
     border-bottom: 1px solid rgba(224, 224, 224, 1);
 }
 
-.admin-page-main-container .check-box {
+.admin-page-main-container .hide-duplicate-record-cb-container {
     display: flex;
     justify-content: flex-end;
+}
+
+.exam-details-holder .paper-sheet {
+    height: calc(100% - 160px);
+    overflow: auto;
+    padding: 5px;
+}
+
+.student-name {
+    min-width: 25%;
+    text-align: left;
+}
+
+.exam-url {
+    flex: 1;
+}
+
+.send-email-link {
+    color: #ff784e;
+}
+
+.send-email-link:hover {
+    text-decoration: underline;
+    cursor: pointer;
 }

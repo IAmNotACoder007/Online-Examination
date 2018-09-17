@@ -31,7 +31,7 @@ class TopBar extends Component {
     handleClose = () => {
         this.setState({ anchorEl: null });
     };
-   
+
     handleOrgRegistrationClose = () => {
         this.setState({ showOrganizationRegistrationDlg: false })
     }
@@ -39,7 +39,7 @@ class TopBar extends Component {
     getTopBarRightSideContent = () => {
         const { anchorEl } = this.state;
         const open = Boolean(anchorEl);
-        if (this.props.isAdmin === undefined) {
+        if (!this.props.isAdmin && !this.props.isStudentLogin) {
             return (<Button color="inherit" onClick={() => { this.setState({ showOrganizationRegistrationDlg: true }) }}>Register Organization</Button>)
         }
         else {
@@ -68,7 +68,7 @@ class TopBar extends Component {
                             open={open}
                             onClose={this.handleClose}
                         >
-                            <MenuItem onClick={this.handleClose}>Change password</MenuItem>                            
+                            <MenuItem onClick={this.handleClose}>Change password</MenuItem>
                             <div className="top-bar-link"><Link to="/logout">Logout</Link></div>
                         </Menu>
                     </div>
