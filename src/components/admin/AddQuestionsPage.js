@@ -26,7 +26,7 @@ class AddQuestions extends Component {
         this.correctOptions = [];
 
 
-        this.state = {           
+        this.state = {
             uploadFile: false,
             hasValidQuestions: true,
             hasValidAnswers: true,
@@ -185,6 +185,7 @@ class AddQuestions extends Component {
                     </div>
                 )
             }
+            return "";
         }
 
         this.getOptionsPreviewJsx = (options) => {
@@ -230,13 +231,15 @@ class AddQuestions extends Component {
                     <div>
                         <ActionButton disabled={this.disableContinueButton} flatButton={true} text="Continue" onClick={this.updateQuestionOptions} />
                         <ActionButton flatButton={true} text="Cancel" onClick={() => {
-                        this.disableContinueButton = false; this.questions = []; this.options = [], this.correctOptions = []; this.setState({
-                            showPreview: false
-                        })
+                            this.disableContinueButton = false; this.questions = []; this.options = [], this.correctOptions = []; this.setState({
+                                showPreview: false
+                            })
                         }} />
                     </div>
                 )
             }
+
+            return {};
         }
 
         this.updateQuestionOptions = () => {
@@ -244,7 +247,7 @@ class AddQuestions extends Component {
             emitEvent("addQuestionAndOptions", data);
             this.setState({ showPreview: false });
             subscribeToEvent("questionsAddedSuccessfully", () => {
-                
+
             })
 
 
@@ -276,7 +279,7 @@ class AddQuestions extends Component {
                                 </Button>
                                 <text className='file-name'>{this.state.fileName}
                                 </text>
-                                <ClearIcon className="clear-icon" onClick={this.resetFile} color="colorError" style={{ display: this.state.fileName ? 'inline-block' : 'none', height: '18px', width: '18px' }} />
+                                <ClearIcon className="clear-icon" onClick={this.resetFile} color="error" style={{ display: this.state.fileName ? 'inline-block' : 'none', height: '18px', width: '18px' }} />
                             </div>
                             <input type="file" id="html-upload" onChange={this.handleFileUpload} style={{ display: 'none' }} />
                         </section>

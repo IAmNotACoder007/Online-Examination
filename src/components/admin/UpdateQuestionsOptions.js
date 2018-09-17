@@ -154,14 +154,14 @@ class UpdateQuestionsOptions extends Component {
         if (this.state.questionsAndOptions && this.state.questionsAndOptions.length) {
             return ((this.state.questionsAndOptions).map((qusOption) => {
                 return (
-                    <div className='question-options-row'>
+                    <div key={qusOption.id} className='question-options-row'>
                         <div className="question"><Tooltip title={qusOption.questions}>
                             <text>{qusOption.questions}</text>
                         </Tooltip>
                         </div>
                         <div className="option">
                             {qusOption.options.split(',').map((option) => {
-                                return (<Tooltip title={option}><text>{option}</text></Tooltip>)
+                                return (<Tooltip key={option} title={option}><text>{option}</text></Tooltip>)
                             })}
                         </div>
                         <div className="icons" style={{ width: '100px', minWidth: '100px', display: 'flex' }}>

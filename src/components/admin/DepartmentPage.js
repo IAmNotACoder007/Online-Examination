@@ -23,7 +23,7 @@ class Department extends Component {
     };
     constructor(props) {
         super(props);
-        this.dialogButtons = undefined;
+        this.dialogButtons = {};
         this.dialogStyleClass = "department-dialog";
         this.dialogTitle = undefined;
         this.errorMessage = "Department name must be specified";
@@ -218,7 +218,6 @@ class Department extends Component {
             <div className="department-container" >
                 <PaperSheet classes="department-page-paper" content={this.getDepartmentPaperContent()} />
                 <MaterialDialog isAlertDialog={this.isAlertDialog} dialogTitle={this.dialogTitle} styleClass={this.dialogStyleClass} dialogContent={this.getDialogContent()} dialogButtons={this.dialogButtons} isOpen={this.state.isDialogOpen} />
-
             </div>
         )
     }

@@ -12,7 +12,7 @@ class ComboBox extends Component {
         }
         this.getMenuItem = () => {
             return (this.props.items.map((item, index) => {
-                return (<MenuItem value={index + 1}>{item}</MenuItem>);
+                return (<MenuItem key={item} value={index + 1}>{item}</MenuItem>);
             }));
         }
 
