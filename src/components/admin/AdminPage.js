@@ -3,13 +3,13 @@ import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import AddQuestions from './AddQuestionsPage';
 import Departments from './DepartmentPage';
 import '../../styles/admin/AdminPage.css'
 import UpdateQuestionOptions from './UpdateQuestionsOptions';
 import ManageAdmins from '../organization/ManageAdminsPage'
 import ExamsDetails from './ExamsDetails';
+import Settings from './SettingsPage';
 
 class AdminPage extends Component {
     state = {
@@ -28,7 +28,7 @@ class AdminPage extends Component {
             case 2:
                 return <UpdateQuestionOptions organizationId={this.props.organizationId} />
             case 3:
-                return <TabContainer>Item four</TabContainer>
+                return <Settings organizationId={this.props.organizationId}></Settings>
             case 4:
                 return <ExamsDetails organizationId={this.props.organizationId} />
             case 5:
@@ -86,12 +86,5 @@ class AdminPage extends Component {
     }
 }
 
-function TabContainer(props) {
-    return (
-        <Typography component="div" style={{ padding: 8 * 3 }}>
-            {props.children}
-        </Typography>
-    );
-}
 
 export default AdminPage;

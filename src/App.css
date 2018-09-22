@@ -89,6 +89,10 @@ button:disabled {
   pointer-events: auto !important;
 }
 
-*{
+* {
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
+.html-button:focus {
+  outline: none;
 }
