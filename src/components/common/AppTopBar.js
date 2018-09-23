@@ -11,7 +11,10 @@ import Menu from '@material-ui/core/Menu';
 import { withStyles } from '@material-ui/core/styles';
 import RegistrationPage from '../../components/RegisterPage';
 import { Link } from 'react-router-dom';
-import '../../styles/AppTopbar.css'
+import '../../styles/AppTopbar.css';
+import Dialog from '../../material_components/Dialog';
+import ThemePicker from '../admin/settings components/ColorPickerPage';
+import ActionButton from '../../material_components/ActionButton';
 
 class TopBar extends Component {
     constructor(props) {
@@ -20,6 +23,7 @@ class TopBar extends Component {
     state = {
         showOrganizationRegistrationDlg: false,
         organizationAlreadyRegistered: false,
+        openThemePicker: false,
     }
 
 
@@ -34,6 +38,35 @@ class TopBar extends Component {
 
     handleOrgRegistrationClose = () => {
         this.setState({ showOrganizationRegistrationDlg: false })
+    }
+
+    onThemeChange = () => {
+
+    }
+
+    getThemePicker = () => {
+        return (<ThemePicker onChange={this.onThemeChange}></ThemePicker>)
+    }
+
+    saveTheme = () => {
+        this.closeThemePickerDialog();
+    }
+
+    closeThemePickerDialog = () => {
+        this.setState({ openThemePicker: false })
+    }
+
+    getThemePickerDialogButton = () => {
+        return (<div>
+            <ActionButton text="Save" onClick={this.saveTheme} flatButton={true} />
+            <ActionButton text="Cancel" onClick={this.closeThemePickerDialog} flatButton={true} />
+        </div>)
+    }
+
+    showThemePicker = () => {
+        this.setState({ openThemePicker: true }, () => {
+            this.handleClose();
+        })
     }
 
     getTopBarRightSideContent = () => {
@@ -69,6 +102,7 @@ class TopBar extends Component {
                             onClose={this.handleClose}
                         >
                             <MenuItem onClick={this.handleClose}>Change password</MenuItem>
+                            <MenuItem onClick={this.showThemePicker}>Change Theme</MenuItem>
                             <div className="top-bar-link"><Link to="/logout">Logout</Link></div>
                         </Menu>
                     </div>
@@ -134,6 +168,7 @@ class TopBar extends Component {
                         </AppBar>
                     </div>
                     <RegistrationPage isalreadyRegister={this.state.organizationAlreadyRegistered} register={this.registerOrganization} open={this.state.showOrganizationRegistrationDlg} handleClose={this.handleOrgRegistrationClose} title="Register Organization" />
+                    <Dialog styleClass="theme-picker-dialog" dialogTitle="Pick Theme" isOpen={this.state.openThemePicker} dialogContent={this.getThemePicker()} dialogButtons={this.getThemePickerDialogButton()}></Dialog>
                 </MuiThemeProvider>
             </div>
         )

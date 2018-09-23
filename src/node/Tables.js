@@ -1,7 +1,7 @@
 const sql = require('mssql');
 
 class Tables {
-    static getUserInfoTable () {
+    static getUserInfoTable() {
         const userInfoTable = new sql.Table("user_info");
         userInfoTable.create = true;
         userInfoTable.columns.add('organization_id', sql.NVarChar(50), { nullable: false });
@@ -11,11 +11,11 @@ class Tables {
         userInfoTable.columns.add('email_address', sql.NVarChar(255), { nullable: false });
         userInfoTable.columns.add('phone', sql.Decimal(10, 0), { nullable: false });
         userInfoTable.columns.add('is_admin', sql.Int, { nullable: false });
-         userInfoTable.columns.add('is_suspended', sql.Int, { nullable: false });
+        userInfoTable.columns.add('is_suspended', sql.Int, { nullable: false });
         return userInfoTable
     }
 
-    static getQuestionsOptionsTable () {
+    static getQuestionsOptionsTable() {
         const questionsOptionsTable = new sql.Table("questions_options");
         questionsOptionsTable.create = true;
         questionsOptionsTable.columns.add('organization_id', sql.NVarChar(50), { nullable: false });
@@ -27,7 +27,7 @@ class Tables {
         return questionsOptionsTable;
     }
 
-    static getDepartmentsTable(){
+    static getDepartmentsTable() {
         const departmentsTable = new sql.Table("departments");
         departmentsTable.create = true;
         departmentsTable.columns.add('organization_id', sql.NVarChar(50), { nullable: false });
@@ -36,7 +36,7 @@ class Tables {
         return departmentsTable;
     }
 
-    static getOrganizationsTable(){
+    static getOrganizationsTable() {
         const organizationTable = new sql.Table("organizations");
         organizationTable.create = true;
         organizationTable.columns.add('organization_id', sql.NVarChar(50), { nullable: false });
@@ -47,7 +47,7 @@ class Tables {
         return organizationTable;
     }
 
-    static getResultsTable(){
+    static getResultsTable() {
         const examsResultTable = new sql.Table("exams_result");
         examsResultTable.create = true;
         examsResultTable.columns.add('id', sql.NVarChar(50), { nullable: false });
@@ -61,6 +61,14 @@ class Tables {
         return examsResultTable;
     }
 
+    static getResultsTable() {
+        const userThemes = new sql.Table("users_theme");
+        userThemes.create = true;
+        userThemes.columns.add('id', sql.NVarChar(50), { nullable: false });
+        userThemes.columns.add('user_id', sql.NVarChar(50), { nullable: false });
+        userThemes.columns.add('theme_color', sql.NVarChar(50), { nullable: false });
+    }
+
 }
 
-module.exports=Tables;
+module.exports = Tables;

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import color from '@material-ui/core/colors/amber';
+import { themeColors } from '../Themes'
 
 class ColorPicker extends Component {
     defaultStates = {
@@ -8,20 +8,7 @@ class ColorPicker extends Component {
     }
     state = { ...this.defaultStates }
 
-    themeColors = [
-        {
-            light: '#90CAF9',
-            main: '#2196F3',
-            dark: '#1E88E5',
-            contrastText: '#fff',
-        },
-        {
-            light: '#80CBC4',
-            main: '#009688',
-            dark: '#00897B',
-            contrastText: '#fff',
-        },
-    ]
+
 
     colorButtonStyls = {
         border: 'none',
@@ -33,7 +20,7 @@ class ColorPicker extends Component {
     }
 
     getAvailableColors() {
-        return this.themeColors.map((color) => {
+        return themeColors.map((color) => {
             return (
                 <button key={color.main} className="html-button" onClick={() => { this.changeThemeColor(color.main) }} style={{ backgroundColor: color.main, ...this.colorButtonStyls }}></button>
             )
@@ -67,7 +54,7 @@ class ColorPicker extends Component {
         }
 
         const availableColorsStyles = {
-            height: '50%'
+            height: '75px',
         }
         return (
             <div className="color-picker" style={holderStyles}>

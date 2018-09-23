@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
-import ColorPicker from './settings components/ColorPickerPage';
 import ActionButton from '../../material_components/ActionButton';
 class Settings extends Component {
 
-    onThemeColorChange() {
-
-    }
-
+  
     saveSettings() {
 
     }
@@ -46,8 +42,7 @@ class Settings extends Component {
             <div style={holderStyles} className="settings-holder">
                 <content style={componentsHolderStyles} className="settings-components-holder">
                     <div style={componentsStyles} className="settings-component">
-                        <p>Theme Color</p>
-                        <ColorPicker onChange={this.onThemeColorChange}></ColorPicker>
+                      This is setting page
                     </div>
                 </content>
                 <footer style={footerStyles}>
