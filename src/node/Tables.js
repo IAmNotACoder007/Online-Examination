@@ -61,12 +61,13 @@ class Tables {
         return examsResultTable;
     }
 
-    static getResultsTable() {
+    static getThemesTable() {
         const userThemes = new sql.Table("users_theme");
         userThemes.create = true;
         userThemes.columns.add('id', sql.NVarChar(50), { nullable: false });
         userThemes.columns.add('user_id', sql.NVarChar(50), { nullable: false });
         userThemes.columns.add('theme_color', sql.NVarChar(50), { nullable: false });
+        return userThemes;
     }
 
 }

@@ -13,9 +13,18 @@ import Thankyou from './components/users/ThankyouPage';
 class Routes extends Component {
     currentComponent;
 
+    getUserId = () => {
+        const userId = cookie.load('userId');
+        return userId === "undefined" ? '' : userId
+    }
+
     isLoggedIn() {
-        const userId = cookie.load('userId')
-        return userId ? true : false;
+        return (this.getUserId() || this.getOrganizationid()) ? true : false;
+    }
+
+    getOrganizationid = () => {
+        const organizationId = cookie.load('organizationId');
+        return organizationId === "undefined" ? '' : organizationId
     }
 
     logOut = () => {
@@ -30,10 +39,8 @@ class Routes extends Component {
     }
 
     renderComponent(componentName, props) {
-        const organizationId = cookie.load('organizationId');
         const isAdmin = cookie.load('isAdmin') === "true";
-        const userId = cookie.load('userId')
-        const loginInfo = { organizationId: organizationId, isAdmin: isAdmin, userId: userId }
+        const loginInfo = { organizationId: this.getOrganizationid(), isAdmin: isAdmin, userId: this.getUserId() }
         const componentProps = { ...props, ...loginInfo }
         const topBarProps = { logOut: this.logOut, ...componentProps }
         this.currentComponent = componentName;

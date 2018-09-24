@@ -28,7 +28,8 @@ class ColorPicker extends Component {
     }
 
     changeThemeColor(color) {
-        this.setState({ selectedColor: color })
+        this.setState({ selectedColor: color });
+        this.props.onChange(color);
     }
 
     render() {

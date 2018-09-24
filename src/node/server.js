@@ -76,6 +76,20 @@ app.get("/getStudentsResultForOrganization", (req, res) => {
             res.send(JSON.stringify({}));
         });
     }
+});
+app.get("/getUserTheme", (req, res) => {
+    const userId = req.query.userId;
+    if (!userId) {
+        console.log("userId is not fount in the request");
+        res.send(JSON.stringify({}));
+    } else {
+        const selectQuery = `select* from users_theme where user_id='${userId}'`;
+        executeQuery(selectQuery).then((record) => {
+            res.send(JSON.stringify(record));
+        }).catch(() => {
+            res.send(JSON.stringify({}));
+        });
+    }
 })
 
 
@@ -381,6 +395,35 @@ io.on('connection', socket => {
             console.log(err)
         });
     });
+
+    socket.on("saveTheme", (data) => {
+        if (!data.userId) {
+            console.log("userId is not present in the data");
+            notifyClient("operationFailed");
+            return
+        }
+        const table = Tables.getThemesTable();
+        const updateQuery = `update users_theme set theme_color='${data.theme}' where user_id='${data.userId}'
+                   IF @@ROWCOUNT=0
+                   insert into users_theme values('${uniqueId()}','${data.userId}','${data.theme}');`
+        connectSql().then((request) => {
+            request.bulk(table, (err) => {
+                sql.close();
+                if (err) {
+                    console.log(err);
+                    notifyClient("operationFailed");
+                } else {
+                    executeQuery(updateQuery).then(() => {
+                        notifyClient("operationSuccessful", { message: "Theme updated successfully" });
+                        notifyClient("themeUpdated");
+                    }).catch((err) => {
+                        notifyClient("operationFailed");
+                        console.log(err)
+                    });
+                }
+            });
+        });
+    })
 
 });
 

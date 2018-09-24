@@ -15,6 +15,9 @@ import '../../styles/AppTopbar.css';
 import Dialog from '../../material_components/Dialog';
 import ThemePicker from '../admin/settings components/ColorPickerPage';
 import ActionButton from '../../material_components/ActionButton';
+import { emitEvent } from '../../Api';
+import { themeColors } from '../admin/Themes';
+import Enumerable from 'linq';
 
 class TopBar extends Component {
     constructor(props) {
@@ -24,6 +27,8 @@ class TopBar extends Component {
         showOrganizationRegistrationDlg: false,
         organizationAlreadyRegistered: false,
         openThemePicker: false,
+        themeColor: '',
+        userTheme: '#2196F3'
     }
 
 
@@ -40,8 +45,8 @@ class TopBar extends Component {
         this.setState({ showOrganizationRegistrationDlg: false })
     }
 
-    onThemeChange = () => {
-
+    onThemeChange = (color) => {
+        this.setState({ themeColor: color });
     }
 
     getThemePicker = () => {
@@ -49,6 +54,7 @@ class TopBar extends Component {
     }
 
     saveTheme = () => {
+        emitEvent("saveTheme", { theme: this.state.themeColor, userId: (this.props.userId || this.props.organizationId) });
         this.closeThemePickerDialog();
     }
 
@@ -138,20 +144,13 @@ class TopBar extends Component {
     }
 
     render() {
+        const userThemeColors = Enumerable.from(themeColors).where(t => t.main === this.state.userTheme).firstOrDefault();
         const theme = createMuiTheme({
             palette: {
                 primary: {
-                    light: '#90CAF9',
-                    main: '#2196F3',
-                    dark: '#1E88E5',
-                    contrastText: '#fff',
-                },
-                secondary: {
-                    light: '#F8BBD0',
-                    main: '#E91E63',
-                    dark: '#AD1457',
-                    contrastText: '#fff',
+                    ...userThemeColors
                 }
+
             }
         });
         return (
@@ -172,6 +171,16 @@ class TopBar extends Component {
                 </MuiThemeProvider>
             </div>
         )
+    }
+
+    componentDidMount() {
+        const userId = this.props.userId || this.props.organizationId;
+        fetch(`http://127.0.0.1:8080/getUserTheme?userId=${userId}`).then((response) => {
+            return response.json();
+        }).then((data) => {
+            if (data[0])
+                this.setState({ userTheme: data[0].theme_color });
+        });
     }
 }
 
