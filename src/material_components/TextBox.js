@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import TextField from '@material-ui/core/TextField';
 import PropTypes from 'prop-types';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import '../styles/TextBox.css';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -22,18 +21,9 @@ class TextBox extends Component {
     isDisabled = () => {
         if (this.props.disabled) return "disabled"
     }
-    render() {
-        const primaryTheme = this.props.primaryTheme;
-        const secondaryTheme = this.props.secondaryTheme;
-        const theme = createMuiTheme({
-            palette: {
-                primary: primaryTheme,
-                secondary: secondaryTheme,
-            }
-        });
-
+    render() {       
         return (
-            <MuiThemeProvider theme={theme}>
+            <div className="textbox">
                 <TextField required={this.props.required}
                     error={this.props.error}
                     multiline={this.props.multiline}
@@ -58,7 +48,7 @@ class TextBox extends Component {
                 />
                 {this.getErrorJsx()}
 
-            </MuiThemeProvider>
+            </div>
         )
     }
 }
@@ -75,8 +65,6 @@ TextBox.propTypes = {
     required: PropTypes.bool,
     error: PropTypes.bool,
     errorMessage: PropTypes.string,
-    primaryTheme: PropTypes.object,
-    secondaryTheme: PropTypes.object,
     inputAdornment: PropTypes.any,
     fieldName: PropTypes.string.isRequired,
     multiline: PropTypes.bool,
@@ -94,23 +82,11 @@ TextBox.defaultProps = {
     required: false,
     error: false,
     errorMessage: '',
-    primaryTheme: {
-        light: '#90CAF9',
-        main: '#2196F3',
-        dark: '#1E88E5',
-        contrastText: '#fff',
-    },
-    secondaryTheme: {
-        light: '#F8BBD0',
-        main: '#E91E63',
-        dark: '#AD1457',
-        contrastText: '#fff',
-    },
     inputAdornment: '',
     onChange: undefined,
     multiline: false,
     rows: "5",
-    disabled: false,  
+    disabled: false,
 }
 
 export default TextBox;

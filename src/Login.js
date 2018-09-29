@@ -13,6 +13,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Register from './components/RegisterPage';
 import Dialog from './material_components/Dialog';
 import WarningIcon from '@material-ui/icons/Warning';
+import Themes from './components/admin/Themes';
 
 class Login extends Component {
     constructor(props) {
@@ -31,6 +32,7 @@ class Login extends Component {
             ...this.defaultState
         }
         this.redirectTo = "";
+        this.theme = Themes.defaultTheme;
         this.userNameErrorMessage = "Username must be specified";
         this.passwordErrorMessage = "Password must be specified";
         this.doLogin = () => {
@@ -49,6 +51,8 @@ class Login extends Component {
             const urlSearchParams = new URLSearchParams(window.location.search);
             return urlSearchParams.get(queryString)
         }
+
+
         subscribeToEvent("loginSuccessful", (data) => {
             const userInfo = JSON.parse(data)[0];
             const returnUrl = this.getQueryStringValueFromUrl('returnUrl');
@@ -60,27 +64,37 @@ class Login extends Component {
                         return false;
                     } else {
                         this.redirectTo = new URL(`${window.location.origin}/admin`);
+                        this.updateCookies(userInfo.user_id, userInfo.organization_id, true);
+                        this.redirectWithTheme(userInfo.organization_id);
                     }
 
                 } else {
                     this.redirectTo = new URL(`${window.location.origin}/selectExam`);
+                    this.updateCookies(userInfo.user_id, userInfo.organization_id, false);
+                    this.setState({ navigate: true });
                 }
             }
-            this.updateCookies(userInfo.user_id, userInfo.organization_id, !!parseInt(userInfo.is_admin));
-            this.setState({ navigate: true });
+
         });
 
         subscribeToEvent("organizationLoginSuccessful", (data) => {
             const userInfo = JSON.parse(data)[0];
             this.redirectTo = new URL(`${window.location.origin}/admin`);
             this.updateCookies(userInfo.user_id, userInfo.organization_id, true);
-            this.setState({ navigate: true });
+            this.redirectWithTheme(userInfo.organization_id);
         });
 
         subscribeToEvent("userNotRegister", () => {
             this.userNameErrorMessage = "Username or password is incorrect";
             this.setState({ userNameError: true });
         });
+
+        this.redirectWithTheme = (userId) => {
+            this.getUserTheme(userId).then((theme) => {
+                this.theme = theme;
+                this.setState({ navigate: true });
+            })
+        }
 
         this.updateCookies = (userId, organizationId, isAdmin) => {
             cookie.save('userId', userId);
@@ -127,8 +141,8 @@ class Login extends Component {
                         <h1 className="sign-in">Sign In</h1>
                     </header>
                     <main className="login-page-paper-content">
-                        <TextBox fieldName="userName" errorMessage={this.userNameErrorMessage} inputAdornment={<AccountCircle />} error={this.state.userNameError} required={true} id="userName" placeholder="Username" onChange={this.handleChange} />
-                        <TextBox fieldName="password" errorMessage={this.passwordErrorMessage} inputAdornment={<PasswordIcon />} error={this.state.passwordError} required={true} id="password" type="password" placeholder="Password" onChange={this.handleChange} />
+                        <TextBox fullWidth={true} fieldName="userName" errorMessage={this.userNameErrorMessage} inputAdornment={<AccountCircle />} error={this.state.userNameError} required={true} id="userName" placeholder="Username" onChange={this.handleChange} />
+                        <TextBox fullWidth={true} fieldName="password" errorMessage={this.passwordErrorMessage} inputAdornment={<PasswordIcon />} error={this.state.passwordError} required={true} id="password" type="password" placeholder="Password" onChange={this.handleChange} />
                         {this.getCheckboxForOrganizationLogin()}
                         <ActionButton color="primary" onClick={this.doLogin} text="Login" />
                         <a className="forgot-password-link">Forgot Password?</a>
@@ -174,16 +188,7 @@ class Login extends Component {
         const theme = createMuiTheme({
             palette: {
                 primary: {
-                    light: '#90CAF9',
-                    main: '#2196F3',
-                    dark: '#1E88E5',
-                    contrastText: '#fff',
-                },
-                secondary: {
-                    light: '#F8BBD0',
-                    main: '#E91E63',
-                    dark: '#AD1457',
-                    contrastText: '#fff',
+                    ...Themes.defaultTheme
                 }
             }
         });
@@ -191,7 +196,7 @@ class Login extends Component {
             return <Redirect to={{
                 pathname: this.redirectTo.pathname,
                 search: this.redirectTo.search,
-                state: { isOrganization: this.state.isOrganizationLogin }
+                state: { isOrganization: this.state.isOrganizationLogin, theme: this.theme }
             }} push={true} />
         }
         return (
@@ -202,6 +207,11 @@ class Login extends Component {
                 </div>
             </MuiThemeProvider>
         )
+    }
+
+    async getUserTheme(userId) {
+        const theme = await Themes.getCurrentTheme(userId);
+        return theme;
     }
 }
 

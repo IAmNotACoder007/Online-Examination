@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { themeColors } from '../Themes'
+import Themes from '../Themes'
 
 class ColorPicker extends Component {
     defaultStates = {
@@ -20,7 +20,7 @@ class ColorPicker extends Component {
     }
 
     getAvailableColors() {
-        return themeColors.map((color) => {
+        return Themes.themeColors.map((color) => {
             return (
                 <button key={color.main} className="html-button" onClick={() => { this.changeThemeColor(color.main) }} style={{ backgroundColor: color.main, ...this.colorButtonStyls }}></button>
             )

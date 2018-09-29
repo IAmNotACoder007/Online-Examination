@@ -82,7 +82,7 @@ class ExamsDetails extends Component {
                     <Departments onChange={this.onDepartmentChange} organizationId={this.props.organizationId}></Departments>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <TextBox className="exam-url" disabled={true} id="examUrl" fieldName="examUrl" fullWidth={true} label="Exam Url"></TextBox>
+                    <TextBox fullWidth={true} className="exam-url" disabled={true} id="examUrl" fieldName="examUrl" fullWidth={true} label="Exam Url"></TextBox>
                     <ActionButton styles={{ height: '40px', marginLeft: '10px' }} text="Copy Url" onClick={this.copyUrl} flatButton={true}></ActionButton>
                     <Snackbar
                         anchorOrigin={{

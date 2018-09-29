@@ -82,3 +82,7 @@
     text-decoration: underline;
     cursor: pointer;
 }
+
+.exam-details-holder .textbox {
+    flex: 1;
+}

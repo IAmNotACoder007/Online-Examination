@@ -265,9 +265,9 @@ class AddQuestions extends Component {
                 <div className="exam-add-question-paper-sheet">
                     <content className="exam-add-question-content">
                         <section className="left-side">
-                            <TextBox onChange={this.handleChange} errorMessage={this.questionsErrorMessage} error={!this.state.hasValidQuestions} id="exam-questions" fieldName="Questions" label="Question" placeholder="Question" />
-                            <TextBox onChange={this.handleChange} errorMessage={this.answersErrorMessage} error={!this.state.hasValidAnswers} id="exam-options" rows="6" fieldName="Answers" multiline={true} label="Options" placeholder="Put One Option per Line" />
-                            <TextBox onChange={this.handleChange} errorMessage={this.correctOptionErrorMessage} error={!this.state.hasValidCorrectOption} id="correctOption" fieldName="CorrectOption" label="Correct Option" placeholder="Correct Option" />
+                            <TextBox fullWidth={true} onChange={this.handleChange} errorMessage={this.questionsErrorMessage} error={!this.state.hasValidQuestions} id="exam-questions" fieldName="Questions" label="Question" placeholder="Question" />
+                            <TextBox fullWidth={true} onChange={this.handleChange} errorMessage={this.answersErrorMessage} error={!this.state.hasValidAnswers} id="exam-options" rows="6" fieldName="Answers" multiline={true} label="Options" placeholder="Put One Option per Line" />
+                            <TextBox fullWidth={true} onChange={this.handleChange} errorMessage={this.correctOptionErrorMessage} error={!this.state.hasValidCorrectOption} id="correctOption" fieldName="CorrectOption" label="Correct Option" placeholder="Correct Option" />
                         </section>
                         <div className="separator">or</div>
                         <section className="right-side">

@@ -64,7 +64,8 @@ class Routes extends Component {
                     <Route path='/register' render={() => this.renderComponent(Register)} />
                     <Route path='/admin' render={(props) => {
                         if (this.isLoggedIn())
-                            return (this.renderComponent(AdminPage, { isOrganization: props.location.state.isOrganization }))
+                            return (this.renderComponent(AdminPage,
+                                { isOrganization: props.location.state.isOrganization, theme: props.location.state.theme }))
                         else {
                             return (<Redirect to={{
                                 pathname: '/login',

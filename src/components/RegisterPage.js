@@ -71,10 +71,10 @@ class Register extends Component {
         this.getDialogContent = () => {
             return (
                 <div className="register-page-paper-content" style={{ display: 'flex', flexDirection: 'column' }}>
-                    <TextBox errorMessage={this.fullNameErrorMessage} error={this.state.fullNameError} required={true} id="fullName" fieldName="fullName" placeholder="Full name" label="Full name" onChange={this.handleChange} />
-                    <TextBox errorMessage={this.passwordErrorMessage} error={this.state.passwordError} required={true} id="password" fieldName="password" type="password" label="Password" placeholder="Password" onChange={this.handleChange} />
-                    <TextBox errorMessage={this.emailErrorMessage} error={this.props.isalreadyRegister || this.state.emailAddressError} required={true} id="emailAddress" fieldName="emailAddress" type="email" label="Email address" placeholder="Email address" onChange={this.handleChange} />
-                    <TextBox errorMessage={this.mobileErrorMessage} error={this.state.mobileNumberError} required={true} id="mobileNumber" fieldName="mobileNumber" type="number" label="Mobile number" placeholder="Mobile number" onChange={this.handleChange} />
+                    <TextBox fullWidth={true} errorMessage={this.fullNameErrorMessage} error={this.state.fullNameError} required={true} id="fullName" fieldName="fullName" placeholder="Full name" label="Full name" onChange={this.handleChange} />
+                    <TextBox fullWidth={true} errorMessage={this.passwordErrorMessage} error={this.state.passwordError} required={true} id="password" fieldName="password" type="password" label="Password" placeholder="Password" onChange={this.handleChange} />
+                    <TextBox fullWidth={true} errorMessage={this.emailErrorMessage} error={this.props.isalreadyRegister || this.state.emailAddressError} required={true} id="emailAddress" fieldName="emailAddress" type="email" label="Email address" placeholder="Email address" onChange={this.handleChange} />
+                    <TextBox fullWidth={true} errorMessage={this.mobileErrorMessage} error={this.state.mobileNumberError} required={true} id="mobileNumber" fieldName="mobileNumber" type="number" label="Mobile number" placeholder="Mobile number" onChange={this.handleChange} />
                 </div>
 
             )

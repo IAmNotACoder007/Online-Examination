@@ -16,8 +16,7 @@ import Dialog from '../../material_components/Dialog';
 import ThemePicker from '../admin/settings components/ColorPickerPage';
 import ActionButton from '../../material_components/ActionButton';
 import { emitEvent } from '../../Api';
-import { themeColors } from '../admin/Themes';
-import Enumerable from 'linq';
+import Themes from '../admin/Themes';
 
 class TopBar extends Component {
     constructor(props) {
@@ -144,7 +143,7 @@ class TopBar extends Component {
     }
 
     render() {
-        const userThemeColors = Enumerable.from(themeColors).where(t => t.main === this.state.userTheme).firstOrDefault();
+        const userThemeColors =this.props.theme||Themes.defaultTheme ;
         const theme = createMuiTheme({
             palette: {
                 primary: {
@@ -171,17 +170,7 @@ class TopBar extends Component {
                 </MuiThemeProvider>
             </div>
         )
-    }
-
-    componentDidMount() {
-        const userId = this.props.userId || this.props.organizationId;
-        fetch(`http://127.0.0.1:8080/getUserTheme?userId=${userId}`).then((response) => {
-            return response.json();
-        }).then((data) => {
-            if (data[0])
-                this.setState({ userTheme: data[0].theme_color });
-        });
-    }
+    }    
 }
 
 const styles = {

@@ -10,8 +10,6 @@ import UpdateQuestionOptions from './UpdateQuestionsOptions';
 import ManageAdmins from '../organization/ManageAdminsPage'
 import ExamsDetails from './ExamsDetails';
 import Settings from './SettingsPage';
-import { themeColors } from './Themes';
-import Enumerable from 'linq';
 
 class AdminPage extends Component {
     state = {
@@ -50,11 +48,11 @@ class AdminPage extends Component {
             return (<Tab label="Manage Admins" />)
     }
     render() {
-        const userThemeColors = Enumerable.from(themeColors).where(t => t.main === this.state.userTheme).firstOrDefault();
+       // const userThemeColors = Enumerable.from(themeColors).where(t => t.main === this.state.userTheme).firstOrDefault();
         const theme = createMuiTheme({
             palette: {
                 primary: {
-                    ...userThemeColors
+                    ...this.props.theme
                 }
 
             }
@@ -86,16 +84,7 @@ class AdminPage extends Component {
 
         )
     }
-
-    componentDidMount() {
-        const userId = this.props.userId || this.props.organizationId;
-        fetch(`http://127.0.0.1:8080/getUserTheme?userId=${userId}`).then((response) => {
-            return response.json();
-        }).then((data) => {
-            if (data[0])
-                this.setState({ userTheme: data[0].theme_color });
-        });
-    }
+ 
 }
 
 
