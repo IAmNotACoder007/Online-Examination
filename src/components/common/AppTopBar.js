@@ -48,8 +48,8 @@ class TopBar extends Component {
         this.setState({ themeColor: color });
     }
 
-    getThemePicker = () => {
-        return (<ThemePicker onChange={this.onThemeChange}></ThemePicker>)
+    getThemePicker = (currentTheme) => {
+        return (<ThemePicker defaultSelected={currentTheme} onChange={this.onThemeChange}></ThemePicker>)
     }
 
     saveTheme = () => {
@@ -143,7 +143,7 @@ class TopBar extends Component {
     }
 
     render() {
-        const userThemeColors =this.props.theme||Themes.defaultTheme ;
+        const userThemeColors = this.props.theme || Themes.defaultTheme;
         const theme = createMuiTheme({
             palette: {
                 primary: {
@@ -166,11 +166,11 @@ class TopBar extends Component {
                         </AppBar>
                     </div>
                     <RegistrationPage isalreadyRegister={this.state.organizationAlreadyRegistered} register={this.registerOrganization} open={this.state.showOrganizationRegistrationDlg} handleClose={this.handleOrgRegistrationClose} title="Register Organization" />
-                    <Dialog styleClass="theme-picker-dialog" dialogTitle="Pick Theme" isOpen={this.state.openThemePicker} dialogContent={this.getThemePicker()} dialogButtons={this.getThemePickerDialogButton()}></Dialog>
+                    <Dialog styleClass="theme-picker-dialog" dialogTitle="Pick Theme" isOpen={this.state.openThemePicker} dialogContent={this.getThemePicker(userThemeColors.main)} dialogButtons={this.getThemePickerDialogButton()}></Dialog>
                 </MuiThemeProvider>
             </div>
         )
-    }    
+    }
 }
 
 const styles = {

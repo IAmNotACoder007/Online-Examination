@@ -222,11 +222,7 @@ class AddQuestions extends Component {
         }
 
         this.getDialogButtons = () => {
-            if (this.state.showWarning) {
-                return (
-                    <ActionButton flatButton={true} text="Ok" onClick={() => { this.setState({ showWarning: false }) }} />
-                )
-            } else if (this.state.showPreview) {
+             if (this.state.showPreview) {
                 return (
                     <div>
                         <ActionButton disabled={this.disableContinueButton} flatButton={true} text="Continue" onClick={this.updateQuestionOptions} />
@@ -237,9 +233,12 @@ class AddQuestions extends Component {
                         }} />
                     </div>
                 )
+            }else{
+                return (
+                    <ActionButton flatButton={true} text="Ok" onClick={() => { this.setState({ showWarning: false }) }} />
+                )
             }
-
-            return {};
+          
         }
 
         this.updateQuestionOptions = () => {

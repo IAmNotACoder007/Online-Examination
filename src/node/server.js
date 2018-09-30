@@ -415,7 +415,7 @@ io.on('connection', socket => {
                 } else {
                     executeQuery(updateQuery).then(() => {
                         notifyClient("operationSuccessful", { message: "Theme updated successfully" });
-                        notifyClient("themeUpdated");
+                        notifyClient("themeUpdated", { theme: data.theme });
                     }).catch((err) => {
                         notifyClient("operationFailed");
                         console.log(err)

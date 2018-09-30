@@ -8,6 +8,8 @@ import SelectExam from './components/users/SelectExam';
 import cookie from 'react-cookies';
 import TopBar from './components/common/AppTopBar';
 import Thankyou from './components/users/ThankyouPage';
+import Themes from './components/admin/Themes';
+import Enumerable from 'linq';
 
 
 class Routes extends Component {
@@ -16,6 +18,14 @@ class Routes extends Component {
     getUserId = () => {
         const userId = cookie.load('userId');
         return userId === "undefined" ? '' : userId
+    }
+
+    getCurrentTheme = () => {
+        const theme = sessionStorage.getItem('theme');
+        if (theme) {
+            return Enumerable.from(Themes.themeColors).where(t => t.main === theme).firstOrDefault();
+        }
+        return null;
     }
 
     isLoggedIn() {
@@ -31,6 +41,7 @@ class Routes extends Component {
         cookie.remove('userId');
         cookie.remove('organizationId');
         cookie.remove('isAdmin');
+        sessionStorage.removeItem("theme");
     }
 
     isStudent = () => {
@@ -65,7 +76,7 @@ class Routes extends Component {
                     <Route path='/admin' render={(props) => {
                         if (this.isLoggedIn())
                             return (this.renderComponent(AdminPage,
-                                { isOrganization: props.location.state.isOrganization, theme: props.location.state.theme }))
+                                { isOrganization: props.location.state.isOrganization, theme: (this.getCurrentTheme() || props.location.state.theme) }))
                         else {
                             return (<Redirect to={{
                                 pathname: '/login',

@@ -58,7 +58,7 @@ TextBox.propTypes = {
     label: PropTypes.string,
     placeholder: PropTypes.string,
     className: PropTypes.string,
-    defaultValue: PropTypes.string,
+    defaultValue: PropTypes.any,
     type: PropTypes.string,
     onChange: PropTypes.func,
     fullWidth: PropTypes.bool,

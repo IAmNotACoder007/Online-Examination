@@ -65,7 +65,7 @@ class Login extends Component {
                     } else {
                         this.redirectTo = new URL(`${window.location.origin}/admin`);
                         this.updateCookies(userInfo.user_id, userInfo.organization_id, true);
-                        this.redirectWithTheme(userInfo.organization_id);
+                        this.redirectWithTheme(userInfo.user_id);
                     }
 
                 } else {

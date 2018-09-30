@@ -10,11 +10,22 @@ import UpdateQuestionOptions from './UpdateQuestionsOptions';
 import ManageAdmins from '../organization/ManageAdminsPage'
 import ExamsDetails from './ExamsDetails';
 import Settings from './SettingsPage';
+import { subscribeToEvent } from '../../Api';
+import Dialog from '../../material_components/Dialog';
+import Button from '../../material_components/ActionButton';
+import InfoIcon from '@material-ui/icons/InfoOutline';
 
 class AdminPage extends Component {
+    constructor(props) {
+        super(props);
+        subscribeToEvent("themeUpdated", (data) => {
+            sessionStorage.setItem('theme', JSON.parse(data).theme);
+            this.setState({ reload: true });
+        });
+    }
     state = {
         value: 0,
-        userTheme: '#2196F3'
+        reload: false
     };
 
     handleChange = (event, value) => {
@@ -47,8 +58,33 @@ class AdminPage extends Component {
         if (this.props.isOrganization)
             return (<Tab label="Manage Admins" />)
     }
+    closeDialog = () => {
+        this.setState({ reload: false });
+    }
+
+    reloadPage = () => {
+        window.location.reload();
+        this.closeDialog();
+    }
+
+    getDialogContent() {
+        return (
+
+            <div style={{display:'flex',alignItems:'center'}}>
+                <InfoIcon style={{ height: "60px", width: '60px' }} color="action"></InfoIcon>
+                You portal theme has been changed, do you want to reload the page?
+            </div>
+        )
+    }
+    getDialogButtons() {
+        return (
+            <div>
+                <Button text="yes" onClick={this.reloadPage} flatButton={true}></Button>
+                <Button text="No" onClick={this.closeDialog} flatButton={true}></Button>
+            </div>
+        )
+    }
     render() {
-       // const userThemeColors = Enumerable.from(themeColors).where(t => t.main === this.state.userTheme).firstOrDefault();
         const theme = createMuiTheme({
             palette: {
                 primary: {
@@ -80,11 +116,12 @@ class AdminPage extends Component {
                         {this.renderTabContent()}
                     </MuiThemeProvider>
                 </div>
+                <Dialog isAlertDialog={true} isOpen={this.state.reload} dialogButtons={this.getDialogButtons()} dialogContent={this.getDialogContent()}></Dialog>
             </content>
 
         )
     }
- 
+
 }
 
 

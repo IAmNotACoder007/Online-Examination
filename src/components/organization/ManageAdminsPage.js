@@ -121,7 +121,7 @@ class ManageAdmins extends Component {
                     label="Suspended"
                     control={
                         <Switch
-                            checked={this.state.isSuspended === undefined ? adminInfo.is_suspended : this.state.isSuspended}
+                            checked={this.state.isSuspended === undefined ? !!adminInfo.is_suspended : this.state.isSuspended}
                             onChange={this.updateSuspention('isSuspended')}
                             value="isSuspended"
                             color="primary"
@@ -145,7 +145,7 @@ class ManageAdmins extends Component {
         return (this.adminsList.map(info => {
             const indicatorClass = info.is_suspended ? "suspended-admin" : "active-admin"
             return (
-                <div className="admin-info">
+                <div key={info.user_id} className="admin-info">
                     <span className={`admin-statue ${indicatorClass}`}></span>
                     <text style={{ textTransform: 'capitalize' }}>{info.full_name}</text>
                     <text>{info.email_address}</text>
@@ -161,7 +161,7 @@ class ManageAdmins extends Component {
 
     registerAdmin = (data) => {
         if (!data || Object.keys(data) === null) return;
-        const adminInfo = { isAdmin:Number(true), organizationId: this.props.organizationId, ...data };
+        const adminInfo = { isAdmin: Number(true), organizationId: this.props.organizationId, ...data };
         emitEvent("addNewUser", adminInfo)
     }
 

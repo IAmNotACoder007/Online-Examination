@@ -11,15 +11,13 @@ class EditAction extends Component {
     }
 
     getDialogButtons = () => {
-        if (this.state.openDialog) {
-            return (
-                <div className="edit-dialog-buttons" style={{ display: 'flex' }}>
-                    {this.getExtraButtons()}
-                    <ActionButton disabled={this.props.disableSaveButton} text="Save" flatButton={true} onClick={this.onSave} />
-                    <ActionButton text="Cancel" flatButton={true} onClick={this.closeDialog} />
-                </div>
-            )
-        }
+        return (
+            <div className="edit-dialog-buttons" style={{ display: 'flex' }}>
+                {this.getExtraButtons()}
+                <ActionButton disabled={this.props.disableSaveButton} text="Save" flatButton={true} onClick={this.onSave} />
+                <ActionButton text="Cancel" flatButton={true} onClick={this.closeDialog} />
+            </div>
+        )
     }
 
     getExtraButtons = () => {
@@ -27,7 +25,7 @@ class EditAction extends Component {
             return (
                 <div>
                     {this.props.extraButtons.map((button) => {
-                        return <ActionButton text={button.text} flatButton={true} onClick={button.onClick} />
+                        return <ActionButton key={button.text} text={button.text} flatButton={true} onClick={button.onClick} />
                     })}
                 </div>
             )
@@ -52,9 +50,7 @@ class EditAction extends Component {
     }
 
     getDialogContent = () => {
-        if (this.state.openDialog) {
-            return this.props.contentSource()
-        }
+        return this.props.contentSource()
     }
 
     render() {

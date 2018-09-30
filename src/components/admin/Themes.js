@@ -1,7 +1,8 @@
 import Enumerable from 'linq';
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 class Themes extends Component {
+   
     static defaultTheme = {
         light: '#90CAF9',
         main: '#2196F3',
