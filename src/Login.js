@@ -57,22 +57,22 @@ class Login extends Component {
             const userInfo = JSON.parse(data)[0];
             const returnUrl = this.getQueryStringValueFromUrl('returnUrl');
             if (returnUrl) { this.redirectTo = new URL(returnUrl); }
-            else {
-                if (userInfo.is_admin) {
-                    if (userInfo.is_suspended) {
-                        this.setState({ isSuspendedAccount: true });
-                        return false;
-                    } else {
-                        this.redirectTo = new URL(`${window.location.origin}/admin`);
-                        this.updateCookies(userInfo.user_id, userInfo.organization_id, true);
-                        this.redirectWithTheme(userInfo.user_id);
-                    }
-
+            if (userInfo.is_admin) {
+                if (userInfo.is_suspended) {
+                    this.setState({ isSuspendedAccount: true });
+                    return false;
                 } else {
-                    this.redirectTo = new URL(`${window.location.origin}/selectExam`);
-                    this.updateCookies(userInfo.user_id, userInfo.organization_id, false);
-                    this.setState({ navigate: true });
+                    if (!this.redirectTo)
+                        this.redirectTo = new URL(`${window.location.origin}/admin`);
+                    this.updateCookies(userInfo.user_id, userInfo.organization_id, true);
+                    this.redirectWithTheme(userInfo.user_id);
                 }
+
+            } else {
+                if (!this.redirectTo)
+                    this.redirectTo = new URL(`${window.location.origin}/selectExam`);
+                this.updateCookies(userInfo.user_id, userInfo.organization_id, false);
+                this.setState({ navigate: true });
             }
 
         });
