@@ -8,7 +8,9 @@ const uniqueId = require('uuid/v4');
 const Deferred = require('node-defer');
 const Tables = require('./Tables');
 const bodyParser = require('body-parser');
-const jsonParser = bodyParser.json()
+const jsonParser = bodyParser.json();
+const nodemailer = require('nodemailer');
+var otpGenerator = require('otp-generator')
 // our localhost port
 const port = 8080;
 
@@ -77,6 +79,7 @@ app.get("/getStudentsResultForOrganization", (req, res) => {
         });
     }
 });
+
 app.get("/getUserTheme", (req, res) => {
     const userId = req.query.userId;
     if (!userId) {
@@ -152,6 +155,35 @@ io.on('connection', socket => {
                 }
             });
         });
+    });
+
+    socket.on('generatePassword', (data) => {
+        if (!data.email) {
+            console.log("Email not found in the request");
+            notifyClient("operationFailed");
+            return;
+        } else {
+            const newPassword = otpGenerator.generate(6, { upperCase: false, specialChars: true });
+            let selectQuery = `select* from user_info where email_address='${data.email}'`;
+            let updateQuery = `update user_info set password='${newPassword}' where email_address='${data.email}'`;
+            if (data.isOrganization) {
+                selectQuery = `select* from organizations where organization_email='${data.email}'`;
+                let updateQuery = `update organizations set organization_password='${newPassword}' where organization_email='${data.email}'`;
+            }
+            executeQuery(selectQuery).then((record) => {
+                if (record && record.length > 0) {
+
+                    sendEmail(data.email, "Passworg", `Your new password is ${newPassword}`).then(() => {
+                        executeQuery(updateQuery).then((record) => {
+                            notifyClient("passwordGeneratedSuccessfully");
+                            notifyClient("operationSuccessful", { message: "New password has been send on your email" });
+                        });
+                    });
+                } else {
+                    notifyClient("emailNotFound");
+                }
+            })
+        }
     });
 
     socket.on('doOrganizationLogin', (data) => {
@@ -489,7 +521,33 @@ const connectSql = (conf) => {
     return sqlDef;
 }
 
+const sendEmail = (email, subject, text) => {
+    const def = new Deferred();
+    const transporter = nodemailer.createTransport({
+        ...config.mailConfig()
+    });
 
+
+    const mailOptions = {
+        from: `${config.mailConfig().auth.user}`,
+        to: `${email}`,
+        subject: `${subject}`,
+        text: `${text}`
+    };
+
+    // send mail with defined transport object
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            notifyClient("operationFailed");
+            def.reject();
+            return console.log(error);
+        } else {
+            def.resolve();
+        }
+
+    });
+    return def;
+}
 
 const executeQuery = (query, conf) => {
     const def = new Deferred();

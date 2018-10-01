@@ -3,8 +3,8 @@ class Configuration {
     basicConfig() {
         return {
             user: 'sa',
-            password: 'admin123',
-            server: 'localhost',           
+            password: 'YourPassword',
+            server: 'localhost',
         }
     };
 
@@ -13,9 +13,22 @@ class Configuration {
             user: this.basicConfig().user,
             password: this.basicConfig().password,
             server: this.basicConfig().server,
-            database: 'OnlineQuiz',            
+            database: 'OnlineQuiz',
         }
     };
+
+    mailConfig() {
+        return {
+            service: 'Gmail',
+            auth: {
+                user: 'YourEmail',
+                pass: 'YourPassword'
+            },
+            tls: {
+                rejectUnauthorized: false
+            }
+        }
+    }
 }
 
 module.exports = Configuration;

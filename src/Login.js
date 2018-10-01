@@ -14,19 +14,26 @@ import Register from './components/RegisterPage';
 import Dialog from './material_components/Dialog';
 import WarningIcon from '@material-ui/icons/Warning';
 import Themes from './components/admin/Themes';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 class Login extends Component {
     constructor(props) {
         super(props);
         this.defaultState = {
             userNameError: false,
+            userMailError: false,
             passwordError: false,
             userName: "",
             password: "",
+            userMail: '',
             navigate: false,
             isOrganizationLogin: true,
             openRegisterDialog: false,
             isSuspendedAccount: false,
+            forgotPassword: false,
+            forOrganizationPassword: true,
+            userMailErrorMessage: "Email must be specified",
+            loading: false
         }
         this.state = {
             ...this.defaultState
@@ -35,6 +42,7 @@ class Login extends Component {
         this.theme = Themes.defaultTheme;
         this.userNameErrorMessage = "Username must be specified";
         this.passwordErrorMessage = "Password must be specified";
+
         this.doLogin = () => {
             this.validateFields();
             if (this.state.isOrganizationLogin && !this.props.isStudentLogin)
@@ -44,13 +52,21 @@ class Login extends Component {
         }
 
         this.isOrganizationLogin = (name, isOrganizationLogin) => {
-            this.setState({ isOrganizationLogin: isOrganizationLogin })
+            this.setState({ [name]: isOrganizationLogin })
         }
 
         this.getQueryStringValueFromUrl = (queryString) => {
             const urlSearchParams = new URLSearchParams(window.location.search);
             return urlSearchParams.get(queryString)
         }
+
+        subscribeToEvent("emailNotFound", () => {
+            this.setState({ userMailError: true, loading: false, userMailErrorMessage: "Email address is not register" });
+        });
+
+        subscribeToEvent("passwordGeneratedSuccessfully", () => {
+            this.closeDialog();
+        });
 
 
         subscribeToEvent("loginSuccessful", (data) => {
@@ -129,7 +145,7 @@ class Login extends Component {
         this.getCheckboxForOrganizationLogin = () => {
             if (!this.props.isStudentLogin) {
                 return (
-                    <CheckBox onChange={this.isOrganizationLogin} checked={this.state.isOrganizationLogin} label="Organization Login"></CheckBox>
+                    <CheckBox value="isOrganizationLogin" onChange={this.isOrganizationLogin} checked={this.state.isOrganizationLogin} label="Organization Login"></CheckBox>
                 )
             }
         }
@@ -145,16 +161,17 @@ class Login extends Component {
                         <TextBox fullWidth={true} fieldName="password" errorMessage={this.passwordErrorMessage} inputAdornment={<PasswordIcon />} error={this.state.passwordError} required={true} id="password" type="password" placeholder="Password" onChange={this.handleChange} />
                         {this.getCheckboxForOrganizationLogin()}
                         <ActionButton color="primary" onClick={this.doLogin} text="Login" />
-                        <a className="forgot-password-link">Forgot Password?</a>
+                        <a className="forgot-password-link" onClick={() => {
+                            this.setState({ forgotPassword: true });
+                        }}>Forgot Password?</a>
                     </main>
                     {this.getLoginFooter()}
                 </div>
             )
         }
 
-        this.handleChange = (fieldName, val) => {
-            this.setState({ [fieldName]: val, [`${fieldName}Error`]: !val.trim() });
-
+        this.handleChange = (fieldName, val) => {            
+            this.setState({ [fieldName]: val, [`${fieldName}Error`]: !val.trim(),userMailErrorMessage: "Email must be specified", });
         }
 
         this.validateFields = () => {
@@ -179,8 +196,57 @@ class Login extends Component {
             )
         }
 
+        this.getForgotPassDialogContent = () => {
+            return (
+                <div>
+                    <TextBox fullWidth={true} fieldName="userMail" errorMessage={this.state.userMailErrorMessage} error={this.state.userMailError} required={true} id="userMail" placeholder="Email" onChange={this.handleChange} />
+                    <CheckBox value="forOrganizationPassword" onChange={this.isOrganizationLogin} checked={this.state.forOrganizationPassword} label="Is Organization"></CheckBox>
+                </div>
+            )
+        }
+
+        this.getForgotPassDialogButton = () => {
+            const classes = {
+                buttonProgress: {
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    marginTop: -12,
+                    marginLeft: -12,
+                },
+            }
+            return (
+                <div className="password-dialog-button-holder" style={{ display: 'flex' }}>
+                    <div style={{ position: 'relative' }}>
+                        <ActionButton disabled={this.state.loading} flatButton={true} text="Send" onClick={() => { this.generatePassword() }} />
+                        {this.state.loading && <CircularProgress size={24} style={classes.buttonProgress} />}
+                    </div>
+                    <ActionButton flatButton={true} text="Cancel" onClick={() => { this.closeDialog() }} />
+                </div>
+            )
+        }
+
+        this.closeDialog = () => {
+            this.setState({
+                openRegisterDialog: false,
+                forgotPassword: false,
+                userMailError: false,
+                userMailErrorMessage: "Email must be specified",
+                loading: false
+            });
+        }
+
+        this.generatePassword = () => {
+            if (!this.state.userMail) {
+                this.setState({ userMailError: true });
+            } else {
+                this.setState({ loading: true });
+                emitEvent("generatePassword", { email: this.state.userMail, isOrganization: this.state.forOrganizationPassword })
+            }
+        }
+
         this.getSuspendedAccountMsgDialogButton = () => {
-            return <ActionButton flatButton={true} text="Ok" onClick={() => { this.setState({ isSuspendedAccount: false }) }} />
+            return <ActionButton flatButton={true} text="Ok" onClick={() => { this.closeDialog() }} />
         }
 
     }
@@ -204,6 +270,7 @@ class Login extends Component {
                 <div className="login-container" >
                     <PaperSheet classes="login-page-paper" content={this.getLoginPaperContent()} />
                     <Dialog isAlertDialog={true} isOpen={this.state.isSuspendedAccount} dialogTitle="Warning" dialogButtons={this.getSuspendedAccountMsgDialogButton()} dialogContent={this.getSuspendedAccountsMessage()}></Dialog>
+                    <Dialog styleClass="password-dialog" isOpen={this.state.forgotPassword} dialogTitle="Password" dialogButtons={this.getForgotPassDialogButton()} dialogContent={this.getForgotPassDialogContent()}></Dialog>
                 </div>
             </MuiThemeProvider>
         )

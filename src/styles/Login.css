@@ -27,7 +27,8 @@
 
 .login-header {
     height: 85px;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    ;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -96,4 +97,9 @@ a.forgot-password-link {
     flex-direction: column;
     justify-content: space-between;
     height: 100%;
+}
+
+.password-dialog {
+    height: 250px;
+    width: 350px;
 }
